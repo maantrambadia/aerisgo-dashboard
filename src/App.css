@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
+
 /* Local fonts: Urbanist (served from /public/fonts) */
 @font-face {
   font-family: "Urbanist";
@@ -129,8 +131,6 @@
   font-display: swap;
 }
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -170,72 +170,42 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --radius: 0.80rem;
+  /* AerisGo theme */
+  --gradient-top: #e3d0bf;
+  --gradient-bottom: #541424;
+  --background: #e3d0bf;
+  --foreground: #541424;
+  --card: #e3d0bf;
+  --card-foreground: #541424;
+  --popover: #e3d0bf;
+  --popover-foreground: #541424;
+  --primary: #541424;
+  --primary-foreground: #e3d7cb;
+  --secondary: #e3d7cb;
+  --secondary-foreground: #541424;
+  --muted: #e3d7cb;
+  --muted-foreground: #541424;
+  --accent: #e3d7cb;
+  --accent-foreground: #541424;
+  --destructive: #dc2626; /* keep a clear red for destructive */
+  --border: rgba(84, 20, 36, 0.30);
+  --input: rgba(84, 20, 36, 0.30);
+  --ring: #541424;
+  /* keep charts reasonable defaults */
+  --chart-1: #541424;
+  --chart-2: #8a2f44;
+  --chart-3: #b35a72;
+  --chart-4: #d9a6b6;
+  --chart-5: #e3d7cb;
+  --sidebar: #541424;
+  --sidebar-foreground: #e3d7cb;
+  --sidebar-primary: #541424;
+  --sidebar-primary-foreground: #e3d7cb;
+  --sidebar-accent: #e3d7cb;
+  --sidebar-accent-foreground: #541424;
+  --sidebar-border: rgba(227, 208, 191, 0.25);
+  --sidebar-ring: #541424;
 }
 
 @layer base {
@@ -243,7 +213,40 @@
     @apply border-border outline-ring/50;
   }
   body {
-    font-family: "Urbanist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    font-family: "Urbanist";
+    font-weight: 500;
     @apply bg-background text-foreground;
   }
+  h1 {
+    @apply text-3xl md:text-4xl font-extrabold leading-tight;
+  }
+  h2 {
+    @apply text-2xl md:text-3xl font-bold leading-snug;
+  }
+  h3 {
+    @apply text-xl md:text-2xl font-semibold leading-snug;
+  }
+  h4 {
+    @apply text-lg font-semibold;
+  }
+  p {
+    @apply text-base leading-7;
+  }
+  label {
+    @apply text-sm font-medium;
+  }
+  small {
+    @apply text-sm text-muted-foreground;
+  }
+}
+
+.dark {
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }

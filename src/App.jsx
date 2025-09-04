@@ -1,11 +1,49 @@
-import { Button } from "@/components/ui/button"
+import { createBrowserRouter } from "react-router";
+import SignIn from "@/pages/SignIn.jsx";
+import RequestAccess from "@/pages/RequestAccess.jsx";
+import PendingApproval from "@/pages/PendingApproval.jsx";
+import NotFound from "@/pages/NotFound.jsx";
+import RequireGuest from "@/components/RequireGuest.jsx";
+import RequireAuth from "@/components/RequireAuth.jsx";
+import RequireAdmin from "@/components/RequireAdmin.jsx";
+import ManagementFlights from "@/pages/ManagementFlights.jsx";
+import Home from "@/pages/Home.jsx";
 
-function App() {
-  return (
-    <div className="flex min-h-svh flex-col items-center justify-center">
-      <Button>Click me</Button>
-    </div>
-  )
-}
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <RequireAuth>
+        <Home />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: "/sign-in",
+    element: (
+      <RequireGuest>
+        <SignIn />
+      </RequireGuest>
+    ),
+  },
+  {
+    path: "/request-access",
+    element: (
+      <RequireGuest>
+        <RequestAccess />
+      </RequireGuest>
+    ),
+  },
+  { path: "/pending-approval", element: <PendingApproval /> },
+  {
+    path: "/flights",
+    element: (
+      <RequireAdmin>
+        <ManagementFlights />
+      </RequireAdmin>
+    ),
+  },
+  { path: "*", element: <NotFound /> },
+]);
 
-export default App
+export default router;
