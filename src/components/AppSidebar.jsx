@@ -41,11 +41,15 @@ export function AppSidebar({ ...props }) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              className="data-[slot=sidebar-menu-button]:!p-1.5 hover:bg-transparent"
             >
               <Link to="/">
-                <Plane className="!size-5" />
-                <span className="font-semibold text-xl">AerisGo</span>
+                <img
+                  src="/images/welcome-logo.png"
+                  alt="AerisGo"
+                  className="h-6 w-auto select-none"
+                  draggable="false"
+                />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
