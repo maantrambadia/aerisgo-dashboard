@@ -23,18 +23,20 @@ export default function PendingApproval() {
     <div className="flex min-h-svh items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Request received</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-xl font-bold text-center">
+            Request received
+          </CardTitle>
+          <CardDescription className="text-center">
             Your account is pending approval by an admin.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground text-center">
             You will be able to access the dashboard once your account has been
             approved. Try again later or contact your administrator.
           </p>
           <div className="mt-4">
-            <Button variant="outline" onClick={onSignOut} className="w-full">
+            <Button onClick={onSignOut} className="w-full">
               Sign out
             </Button>
           </div>
