@@ -8,6 +8,7 @@ import RequireAuth from "@/components/RequireAuth.jsx";
 import RequireAdmin from "@/components/RequireAdmin.jsx";
 import ManagementFlights from "@/pages/ManagementFlights.jsx";
 import Home from "@/pages/Home.jsx";
+import Users from "@/pages/Users.jsx";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,14 @@ const router = createBrowserRouter([
     element: (
       <RequireAdmin>
         <ManagementFlights />
+      </RequireAdmin>
+    ),
+  },
+  {
+    path: "/users",
+    element: (
+      <RequireAdmin>
+        <Users />
       </RequireAdmin>
     ),
   },

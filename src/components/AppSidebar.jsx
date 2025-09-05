@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router";
-import { LayoutDashboard, Plane } from "lucide-react";
+import { LayoutDashboard, Plane, Users as UsersIcon } from "lucide-react";
 import { NavMain } from "@/components/NavMain";
 import { NavUser } from "@/components/NavUser";
 import {
@@ -24,6 +24,7 @@ export function AppSidebar({ ...props }) {
       return [
         { title: "Dashboard", url: "/", icon: LayoutDashboard },
         { title: "Flights", url: "/flights", icon: Plane },
+        { title: "Users", url: "/users", icon: UsersIcon },
       ];
     }
     if (roleLower === "staff") {
