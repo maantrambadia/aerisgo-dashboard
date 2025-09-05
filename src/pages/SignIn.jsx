@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Card,
   CardContent,
@@ -111,6 +112,16 @@ export default function SignIn() {
                   )}
                 </button>
               </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="remember"
+                checked={remember}
+                onCheckedChange={(v) => setRemember(Boolean(v))}
+              />
+              <Label htmlFor="remember" className="text-sm leading-none">
+                Remember me
+              </Label>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Signing in..." : "Sign in"}
