@@ -3,7 +3,9 @@ import { toast } from "sonner";
 
 // in production, there's no localhost so we have to make this dynamic
 const BASE_URL =
-  import.meta.env.MODE === "development" ? "http://localhost:3000/" : "/api";
+  import.meta.env.MODE === "development"
+    ? "http://localhost:3000/"
+    : "https://api.aerisgo.in/";
 
 const api = axios.create({
   baseURL: BASE_URL,
