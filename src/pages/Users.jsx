@@ -44,7 +44,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Pencil, UserCheck, Users as UsersIcon, MoreVertical } from "lucide-react";
+import { Pencil, UserCheck, Users as UsersIcon, MoreVertical, RefreshCw } from "lucide-react";
 
 export default function Users() {
   useDocumentTitle("Users");
@@ -203,6 +203,14 @@ export default function Users() {
                       Manage user accounts, roles, and approvals
                     </CardDescription>
                   </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={fetchUsers}
+                    disabled={loading}
+                  >
+                    <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent>
