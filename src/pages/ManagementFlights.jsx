@@ -23,12 +23,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from "@/components/ui/sheet";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -465,25 +466,27 @@ export default function ManagementFlights() {
           </div>
         </div>
 
-        {/* Create/Edit Drawer */}
-        <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-          <SheetContent side="right" className="sm:max-w-xl">
-            <SheetHeader>
-              <SheetTitle>
+        {/* Create/Edit Dialog */}
+        <Dialog open={drawerOpen} onOpenChange={setDrawerOpen}>
+          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
                 {editing ? `Edit ${editing.flightNumber}` : "Add Flight"}
-              </SheetTitle>
-            </SheetHeader>
-            <form
-              className="flex flex-1 flex-col p-4 gap-3"
-              onSubmit={onSubmit}
-            >
+              </DialogTitle>
+              <DialogDescription>
+                {editing
+                  ? "Update flight information and schedule"
+                  : "Create a new flight with route and schedule details"}
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={onSubmit}>
               <input
                 type="hidden"
                 name="status"
                 value={statusValue}
                 id="status-hidden"
               />
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-1 gap-4 py-4">
                 <div>
                   <Label htmlFor="flightNumber" className="mb-1.5 block">
                     Flight Number
@@ -599,24 +602,22 @@ export default function ManagementFlights() {
                   </div>
                 </div>
               </div>
-              <SheetFooter>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setDrawerOpen(false)}
-                    disabled={saving}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={saving}>
-                    {saving ? "Saving..." : editing ? "Update" : "Create"}
-                  </Button>
-                </div>
-              </SheetFooter>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setDrawerOpen(false)}
+                  disabled={saving}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={saving}>
+                  {saving ? "Saving..." : editing ? "Update" : "Create"}
+                </Button>
+              </DialogFooter>
             </form>
-          </SheetContent>
-        </Sheet>
+          </DialogContent>
+        </Dialog>
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
           <AlertDialogContent>
