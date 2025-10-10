@@ -36,7 +36,15 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Pencil, UserCheck, Users as UsersIcon } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Pencil, UserCheck, Users as UsersIcon, MoreVertical } from "lucide-react";
 
 export default function Users() {
   useDocumentTitle("Users");
@@ -323,26 +331,38 @@ export default function Users() {
                                     )}
                                   </TableCell>
                                   <TableCell className="text-right">
-                                    <div className="flex justify-end gap-2">
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => openEditDialog(user)}
-                                      >
-                                        <Pencil className="h-3.5 w-3.5" />
-                                      </Button>
-                                      {!verified && (
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
                                         <Button
+                                          variant="ghost"
                                           size="sm"
-                                          disabled={!!approving[id]}
-                                          onClick={() => approve(id)}
+                                          className="h-8 w-8 p-0"
                                         >
-                                          {approving[id]
-                                            ? "Approving..."
-                                            : "Approve"}
+                                          <MoreVertical className="h-4 w-4" />
                                         </Button>
-                                      )}
-                                    </div>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end">
+                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                          onClick={() => openEditDialog(user)}
+                                        >
+                                          <Pencil className="mr-2 h-4 w-4" />
+                                          Edit User
+                                        </DropdownMenuItem>
+                                        {!verified && (
+                                          <DropdownMenuItem
+                                            onClick={() => approve(id)}
+                                            disabled={!!approving[id]}
+                                          >
+                                            <UserCheck className="mr-2 h-4 w-4" />
+                                            {approving[id]
+                                              ? "Approving..."
+                                              : "Approve User"}
+                                          </DropdownMenuItem>
+                                        )}
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
                                   </TableCell>
                                 </TableRow>
                               );
