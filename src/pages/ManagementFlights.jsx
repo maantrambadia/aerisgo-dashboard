@@ -2,10 +2,26 @@ import React, { useEffect, useMemo, useState } from "react";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { SiteHeader } from "@/components/SiteHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Sheet,
   SheetContent,
@@ -22,6 +38,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -35,7 +59,14 @@ import { toast } from "sonner";
 import api from "@/lib/axios";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
 import { format } from "date-fns";
-import { Plus, Edit3, Trash2, RefreshCw } from "lucide-react";
+import {
+  Plus,
+  Edit3,
+  Trash2,
+  RefreshCw,
+  Plane,
+  MoreVertical,
+} from "lucide-react";
 import { useAuth } from "@/context/AuthContext.jsx";
 
 export default function ManagementFlights() {
@@ -58,6 +89,7 @@ export default function ManagementFlights() {
   const [status, setStatus] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -187,251 +219,249 @@ export default function ManagementFlights() {
     setDateTo("");
   }
 
+  // Filter flights by status tab
+  const filteredItems = items.filter((flight) => {
+    if (activeTab === "all") return true;
+    return flight.status === activeTab;
+  });
+
+  // Count flights by status
+  const counts = {
+    all: items.length,
+    scheduled: items.filter((f) => f.status === "scheduled").length,
+    delayed: items.filter((f) => f.status === "delayed").length,
+    cancelled: items.filter((f) => f.status === "cancelled").length,
+  };
+
   return (
     <SidebarProvider>
       <AppSidebar variant="inset" />
       <SidebarInset className="dark:bg-black/20">
         <SiteHeader />
         <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <div className="flex items-center justify-between px-4 md:px-6">
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fetchFlights()}
-                    disabled={fetching}
-                  >
-                    <RefreshCw className="mr-2 h-4 w-4" /> Refresh
-                  </Button>
-                  {isAdmin && (
-                    <Button size="sm" onClick={openCreate}>
-                      <Plus className="mr-2 h-4 w-4" /> Add Flight
-                    </Button>
-                  )}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {fetching
-                    ? "Loading..."
-                    : `${total} result${total === 1 ? "" : "s"}`}
-                </div>
-              </div>
-
-              <Card className="mx-4 md:mx-6">
-                <CardHeader>
-                  <CardTitle>Filters</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <Label htmlFor="q">Search</Label>
-                      <Input
-                        id="q"
-                        placeholder="Flight #, Source or Destination"
-                        value={q}
-                        onChange={(e) => setQ(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="source">Source</Label>
-                      <Input
-                        id="source"
-                        placeholder="e.g., LAX"
-                        value={source}
-                        onChange={(e) => setSource(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="destination">Destination</Label>
-                      <Input
-                        id="destination"
-                        placeholder="e.g., JFK"
-                        value={destination}
-                        onChange={(e) => setDestination(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="status">Status</Label>
-                      <Select
-                        value={status || "all"}
-                        onValueChange={(v) => setStatus(v === "all" ? "" : v)}
-                      >
-                        <SelectTrigger id="status" className="h-9">
-                          <SelectValue placeholder="Any" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">Any</SelectItem>
-                          <SelectItem value="scheduled">Scheduled</SelectItem>
-                          <SelectItem value="delayed">Delayed</SelectItem>
-                          <SelectItem value="cancelled">Cancelled</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="dateFrom">Departure From</Label>
-                      <Input
-                        id="dateFrom"
-                        type="date"
-                        value={dateFrom}
-                        onChange={(e) => setDateFrom(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="dateTo">Departure To</Label>
-                      <Input
-                        id="dateTo"
-                        type="date"
-                        value={dateTo}
-                        onChange={(e) => setDateTo(e.target.value)}
-                      />
-                    </div>
+          <div className="@container/main flex flex-1 flex-col gap-2 py-4 md:gap-6 md:py-6">
+            <Card className="mx-4 md:mx-6">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Plane className="h-5 w-5" />
+                      Flights Management
+                    </CardTitle>
+                    <CardDescription className="mt-1.5">
+                      Manage flight schedules, routes, and availability
+                    </CardDescription>
                   </div>
-                  <div className="mt-4 flex gap-2">
-                    <Button variant="outline" size="sm" onClick={clearFilters}>
-                      Clear
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => fetchFlights()}
+                      disabled={fetching}
+                    >
+                      <RefreshCw
+                        className={`h-4 w-4 ${fetching ? "animate-spin" : ""}`}
+                      />
                     </Button>
-                    <Button size="sm" onClick={() => fetchFlights({ page: 1 })}>
-                      Apply
-                    </Button>
-                    <div className="ml-auto flex items-center gap-2">
-                      <Label htmlFor="limit">Per page</Label>
-                      <Select
-                        value={String(limit)}
-                        onValueChange={(v) => setLimit(Number(v))}
-                      >
-                        <SelectTrigger id="limit" className="h-9 w-[100px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {[10, 20, 50].map((n) => (
-                            <SelectItem key={n} value={String(n)}>
-                              {n}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    {isAdmin && (
+                      <Button size="sm" onClick={openCreate}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Flight
+                      </Button>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                  <TabsList className="grid w-full grid-cols-4 mb-6">
+                    <TabsTrigger value="all" className="relative">
+                      All
+                      <Badge
+                        variant="secondary"
+                        className="ml-2 px-1.5 py-0 text-xs"
+                      >
+                        {counts.all}
+                      </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="scheduled" className="relative">
+                      Scheduled
+                      <Badge
+                        variant="secondary"
+                        className="ml-2 px-1.5 py-0 text-xs"
+                      >
+                        {counts.scheduled}
+                      </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="delayed" className="relative">
+                      Delayed
+                      <Badge
+                        variant="secondary"
+                        className="ml-2 px-1.5 py-0 text-xs"
+                      >
+                        {counts.delayed}
+                      </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="cancelled" className="relative">
+                      Cancelled
+                      <Badge
+                        variant="secondary"
+                        className="ml-2 px-1.5 py-0 text-xs"
+                      >
+                        {counts.cancelled}
+                      </Badge>
+                    </TabsTrigger>
+                  </TabsList>
 
-              <Card className="mx-4 md:mx-6">
-                <CardHeader>
-                  <CardTitle>Flights</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {loading ? (
-                    <div className="space-y-2">
-                      {Array(5)
-                        .fill(0)
-                        .map((_, i) => (
-                          <Skeleton key={i} className="h-10 w-full" />
+                  <TabsContent value={activeTab} className="mt-0">
+                    {loading ? (
+                      <div className="space-y-3">
+                        {[...Array(5)].map((_, i) => (
+                          <div key={i} className="flex items-center gap-4">
+                            <Skeleton className="h-12 w-12 rounded-md" />
+                            <div className="space-y-2 flex-1">
+                              <Skeleton className="h-4 w-[250px]" />
+                              <Skeleton className="h-3 w-[200px]" />
+                            </div>
+                            <Skeleton className="h-9 w-20" />
+                          </div>
                         ))}
-                    </div>
-                  ) : items.length === 0 ? (
-                    <div className="text-sm text-muted-foreground">
-                      No flights found.
-                    </div>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="text-left border-b">
-                            <th className="py-2 pr-2">Flight #</th>
-                            <th className="py-2 pr-2">Route</th>
-                            <th className="py-2 pr-2">Departure</th>
-                            <th className="py-2 pr-2">Arrival</th>
-                            <th className="py-2 pr-2">Fare</th>
-                            <th className="py-2 pr-2">Status</th>
-                            {isAdmin && (
-                              <th className="py-2 pr-2 text-right">Actions</th>
-                            )}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {items.map((f) => (
-                            <tr key={f._id} className="border-b last:border-0">
-                              <td className="py-2 pr-2 font-medium">
-                                {f.flightNumber}
-                              </td>
-                              <td className="py-2 pr-2">
-                                {f.source} → {f.destination}
-                              </td>
-                              <td className="py-2 pr-2">
-                                {f.departureTime
-                                  ? format(new Date(f.departureTime), "PPpp")
-                                  : "-"}
-                              </td>
-                              <td className="py-2 pr-2">
-                                {f.arrivalTime
-                                  ? format(new Date(f.arrivalTime), "PPpp")
-                                  : "-"}
-                              </td>
-                              <td className="py-2 pr-2">
-                                ₹
-                                {Number(f.baseFare || 0).toLocaleString(
-                                  "en-IN"
-                                )}
-                              </td>
-                              <td className="py-2 pr-2 capitalize">
-                                {f.status}
-                              </td>
+                      </div>
+                    ) : filteredItems.length === 0 ? (
+                      <div className="text-center py-12">
+                        <Plane className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                        <p className="mt-4 text-sm text-muted-foreground">
+                          No {activeTab !== "all" ? activeTab : ""} flights
+                          found
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="rounded-md border">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Flight #</TableHead>
+                              <TableHead>Route</TableHead>
+                              <TableHead>Departure</TableHead>
+                              <TableHead>Arrival</TableHead>
+                              <TableHead>Fare</TableHead>
+                              <TableHead>Status</TableHead>
                               {isAdmin && (
-                                <td className="py-2 pr-2">
-                                  <div className="flex justify-end gap-2">
-                                    <Button
-                                      variant="outline"
-                                      size="icon"
-                                      onClick={() => openEdit(f)}
-                                    >
-                                      <Edit3 className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                      variant="destructive"
-                                      size="icon"
-                                      onClick={() => requestDelete(f)}
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                  </div>
-                                </td>
+                                <TableHead className="text-right">
+                                  Actions
+                                </TableHead>
                               )}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                  {/* Pagination */}
-                  {pages > 1 && (
-                    <div className="mt-4 flex items-center justify-between">
-                      <div className="text-xs text-muted-foreground">
-                        Page {page} of {pages}
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {filteredItems.map((f) => (
+                              <TableRow key={f._id}>
+                                <TableCell className="font-medium">
+                                  {f.flightNumber}
+                                </TableCell>
+                                <TableCell>
+                                  {f.source} → {f.destination}
+                                </TableCell>
+                                <TableCell className="text-muted-foreground">
+                                  {f.departureTime
+                                    ? format(new Date(f.departureTime), "PPp")
+                                    : "-"}
+                                </TableCell>
+                                <TableCell className="text-muted-foreground">
+                                  {f.arrivalTime
+                                    ? format(new Date(f.arrivalTime), "PPp")
+                                    : "-"}
+                                </TableCell>
+                                <TableCell>
+                                  ₹
+                                  {Number(f.baseFare || 0).toLocaleString(
+                                    "en-IN"
+                                  )}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge
+                                    variant={
+                                      f.status === "scheduled"
+                                        ? "default"
+                                        : f.status === "delayed"
+                                        ? "secondary"
+                                        : "destructive"
+                                    }
+                                    className="capitalize"
+                                  >
+                                    {f.status}
+                                  </Badge>
+                                </TableCell>
+                                {isAdmin && (
+                                  <TableCell className="text-right">
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="h-8 w-8 p-0"
+                                        >
+                                          <MoreVertical className="h-4 w-4" />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end">
+                                        <DropdownMenuLabel>
+                                          Actions
+                                        </DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                          onClick={() => openEdit(f)}
+                                        >
+                                          <Edit3 className="mr-2 h-4 w-4" />
+                                          Edit Flight
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                          onClick={() => requestDelete(f)}
+                                          className="text-destructive focus:text-destructive"
+                                        >
+                                          <Trash2 className="mr-2 h-4 w-4" />
+                                          Delete Flight
+                                        </DropdownMenuItem>
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  </TableCell>
+                                )}
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
                       </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={page <= 1}
-                          onClick={() => fetchFlights({ page: page - 1 })}
-                        >
-                          Prev
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={page >= pages}
-                          onClick={() => fetchFlights({ page: page + 1 })}
-                        >
-                          Next
-                        </Button>
+                    )}
+                    {/* Pagination */}
+                    {pages > 1 && (
+                      <div className="mt-4 flex items-center justify-between">
+                        <div className="text-xs text-muted-foreground">
+                          Page {page} of {pages} • {total} total flights
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={page <= 1}
+                            onClick={() => fetchFlights({ page: page - 1 })}
+                          >
+                            Previous
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={page >= pages}
+                            onClick={() => fetchFlights({ page: page + 1 })}
+                          >
+                            Next
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+                    )}
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
