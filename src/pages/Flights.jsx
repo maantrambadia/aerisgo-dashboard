@@ -85,7 +85,6 @@ export default function ManagementFlights() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
-  const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(true);
   const [fetching, setFetching] = useState(false);
 
@@ -246,15 +245,6 @@ export default function ManagementFlights() {
     } finally {
       setSaving(false);
     }
-  }
-
-  function clearFilters() {
-    setQ("");
-    setSource("");
-    setDestination("");
-    setStatus("");
-    setDateFrom("");
-    setDateTo("");
   }
 
   // Filter flights by status tab

@@ -35,6 +35,7 @@ export default function ModernSeatMapDialog({
     if (open && flight?._id) {
       fetchSeats();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, flight]);
 
   async function fetchSeats() {

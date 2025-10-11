@@ -72,10 +72,12 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     fetchFlightsReport();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flightsPeriod]);
 
   async function fetchAllData() {

@@ -43,7 +43,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import api from "@/lib/axios";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
-import { format } from "date-fns";
 import {
   Plus,
   Edit3,
@@ -62,7 +61,6 @@ export default function Bookings() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
-  const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(true);
   const [fetching, setFetching] = useState(false);
 

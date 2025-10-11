@@ -98,9 +98,11 @@ export default function BookingDialog({
     booking,
     formData.flightId,
     formData.seatNumber,
+    formData.travelClass,
     pricingConfig,
     flights,
     seats,
+    calculatePrice,
   ]);
 
   async function fetchFlights() {
@@ -237,12 +239,6 @@ export default function BookingDialog({
     economy: availableSeats.filter((s) => s.travelClass === "economy"),
   };
 
-  // Helper to format seat display
-  const formatSeatLabel = (seat) => {
-    const parts = [seat.seatNumber];
-    if (seat.isExtraLegroom) parts.push("Extra Legroom");
-    return parts.join(" • ");
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

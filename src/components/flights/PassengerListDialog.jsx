@@ -30,6 +30,7 @@ export default function PassengerListDialog({ open, onOpenChange, flight }) {
     if (open && flight?._id) {
       fetchPassengers();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, flight]);
 
   async function fetchPassengers() {

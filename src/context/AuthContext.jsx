@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import api from "@/lib/axios";
 
@@ -8,18 +9,18 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  async function refresh() {
+  const refresh = useCallback(async () => {
     try {
       const { data } = await api.get("/auth/me");
       setUser(data.user);
-    } catch (err) {
+    } catch {
       setUser(null);
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  async function login({ email, password, remember }) {
+  const login = useCallback(async ({ email, password, remember }) => {
     try {
       const { data } = await api.post("/auth/sign-in/web", {
         email,
@@ -34,9 +35,9 @@ export function AuthProvider({ children }) {
       toast.error(msg);
       throw err;
     }
-  }
+  }, [refresh]);
 
-  async function requestAccess({ name, email, phone, password, gender }) {
+  const requestAccess = useCallback(async ({ name, email, phone, password, gender }) => {
     try {
       const { data } = await api.post("/auth/request-access", {
         name,
@@ -52,24 +53,25 @@ export function AuthProvider({ children }) {
       toast.error(msg);
       throw err;
     }
-  }
+  }, []);
 
-  async function logout() {
+  const logout = useCallback(async () => {
     try {
       await api.post("/auth/sign-out/web");
-    } catch (_) {}
+    } catch {
+      // Ignore errors during logout
+    }
     setUser(null);
     toast.success("Signed out");
-  }
+  }, []);
 
   useEffect(() => {
     refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refresh]);
 
   const value = useMemo(
     () => ({ user, loading, refresh, login, logout, requestAccess }),
-    [user, loading]
+    [user, loading, refresh, login, logout, requestAccess]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
