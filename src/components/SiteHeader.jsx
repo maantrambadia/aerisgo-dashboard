@@ -12,6 +12,7 @@ export function SiteHeader() {
     if (path === "/") return "Dashboard";
     if (path.startsWith("/flights")) return "Flights";
     if (path.startsWith("/users")) return "Users";
+    if (path.startsWith("/bookings")) return "Bookings";
 
     return "AerisGo Admin";
   };

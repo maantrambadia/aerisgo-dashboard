@@ -67,8 +67,13 @@ import {
   RefreshCw,
   Plane,
   MoreVertical,
+  Armchair,
+  Users,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext.jsx";
+import { FLIGHT_NUMBERS, INDIAN_LOCATIONS } from "@/utils/flightData";
+import ModernSeatMapDialog from "@/components/flights/ModernSeatMapDialog";
+import PassengerListDialog from "@/components/flights/PassengerListDialog";
 
 export default function ManagementFlights() {
   useDocumentTitle("Flights");
@@ -96,9 +101,18 @@ export default function ManagementFlights() {
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
 
+  const [flightNumberValue, setFlightNumberValue] = useState("");
+  const [sourceValue, setSourceValue] = useState("");
+  const [destinationValue, setDestinationValue] = useState("");
+
   // Delete dialog state
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+
+  // Seat Map & Passenger List state
+  const [seatMapDialogOpen, setSeatMapDialogOpen] = useState(false);
+  const [passengerDialogOpen, setPassengerDialogOpen] = useState(false);
+  const [selectedFlight, setSelectedFlight] = useState(null);
 
   // Controlled status for the Sheet form using shadcn Select
   const [statusValue, setStatusValue] = useState("scheduled");
@@ -144,16 +158,32 @@ export default function ManagementFlights() {
     setEditing(null);
     setDrawerOpen(true);
     setStatusValue("scheduled");
+    setFlightNumberValue("");
+    setSourceValue("");
+    setDestinationValue("");
   }
   function openEdit(f) {
     setEditing(f);
     setDrawerOpen(true);
     setStatusValue(f?.status || "scheduled");
+    setFlightNumberValue(f?.flightNumber || "");
+    setSourceValue(f?.source || "");
+    setDestinationValue(f?.destination || "");
   }
 
   function requestDelete(f) {
     setDeleteTarget(f);
     setDeleteOpen(true);
+  }
+
+  function openSeatMap(flight) {
+    setSelectedFlight(flight);
+    setSeatMapDialogOpen(true);
+  }
+
+  function openPassengerList(flight) {
+    setSelectedFlight(flight);
+    setPassengerDialogOpen(true);
   }
 
   async function confirmDelete() {
@@ -174,33 +204,40 @@ export default function ManagementFlights() {
     const form = e.currentTarget;
     const fd = new FormData(form);
 
-    // Build payload
-    const payload = {
-      flightNumber: fd.get("flightNumber")?.toString().trim(),
-      source: fd.get("source")?.toString().trim(),
-      destination: fd.get("destination")?.toString().trim(),
-      aircraftType: fd.get("aircraftType")?.toString().trim() || "a320 neo",
-      departureTime: fd.get("departureTime")?.toString(),
-      arrivalTime: fd.get("arrivalTime")?.toString(),
-      baseFare: Number(fd.get("baseFare")),
-      status: fd.get("status")?.toString() || "scheduled",
-    };
+    // Build payload from form data
+    const payload = Object.fromEntries(fd);
 
-    // Convert local datetime to ISO
-    if (payload.departureTime)
+    // Add Select values that aren't in FormData
+    payload.flightNumber = flightNumberValue;
+    payload.source = sourceValue;
+    payload.destination = destinationValue;
+    payload.status = statusValue;
+
+    // Convert datetime-local input to UTC for database storage
+    // Browser automatically handles timezone conversion
+    if (payload.departureTime) {
       payload.departureTime = new Date(payload.departureTime).toISOString();
-    if (payload.arrivalTime)
+    }
+    if (payload.arrivalTime) {
       payload.arrivalTime = new Date(payload.arrivalTime).toISOString();
+    }
 
     try {
       setSaving(true);
       if (editing?._id) {
-        const { _id, ...rest } = editing;
-        await api.put(`/flights/${editing._id}`, payload);
+        // When editing, only send the fields that can be changed
+        const updatePayload = {
+          departureTime: payload.departureTime,
+          arrivalTime: payload.arrivalTime,
+          status: payload.status,
+        };
+        await api.put(`/flights/${editing._id}`, updatePayload);
         toast.success("Flight updated");
       } else {
+        // When creating, force status to 'scheduled'
+        payload.status = "scheduled";
         await api.post(`/flights`, payload);
-        toast.success("Flight created");
+        toast.success("Flight created with seats");
       }
       setDrawerOpen(false);
       fetchFlights();
@@ -232,6 +269,7 @@ export default function ManagementFlights() {
     scheduled: items.filter((f) => f.status === "scheduled").length,
     delayed: items.filter((f) => f.status === "delayed").length,
     cancelled: items.filter((f) => f.status === "cancelled").length,
+    completed: items.filter((f) => f.status === "completed").length,
   };
 
   return (
@@ -275,7 +313,7 @@ export default function ManagementFlights() {
               </CardHeader>
               <CardContent>
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="grid w-full grid-cols-4 mb-6">
+                  <TabsList className="grid w-full grid-cols-5 mb-6">
                     <TabsTrigger value="all" className="relative">
                       All
                       <Badge
@@ -310,6 +348,15 @@ export default function ManagementFlights() {
                         className="ml-2 px-1.5 py-0 text-xs"
                       >
                         {counts.cancelled}
+                      </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="completed" className="relative">
+                      Completed
+                      <Badge
+                        variant="secondary"
+                        className="ml-2 px-1.5 py-0 text-xs"
+                      >
+                        {counts.completed}
                       </Badge>
                     </TabsTrigger>
                   </TabsList>
@@ -386,6 +433,8 @@ export default function ManagementFlights() {
                                         ? "default"
                                         : f.status === "delayed"
                                         ? "secondary"
+                                        : f.status === "completed"
+                                        ? "outline"
                                         : "destructive"
                                     }
                                     className="capitalize"
@@ -411,7 +460,24 @@ export default function ManagementFlights() {
                                         </DropdownMenuLabel>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
+                                          onClick={() => openSeatMap(f)}
+                                        >
+                                          <Armchair className="mr-2 h-4 w-4" />
+                                          View Seat Map
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                          onClick={() => openPassengerList(f)}
+                                        >
+                                          <Users className="mr-2 h-4 w-4" />
+                                          Passenger List
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
                                           onClick={() => openEdit(f)}
+                                          disabled={
+                                            f.status === "cancelled" ||
+                                            f.status === "completed"
+                                          }
                                         >
                                           <Edit3 className="mr-2 h-4 w-4" />
                                           Edit Flight
@@ -480,127 +546,198 @@ export default function ManagementFlights() {
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={onSubmit}>
-              <input
-                type="hidden"
-                name="status"
-                value={statusValue}
-                id="status-hidden"
-              />
-              <div className="grid grid-cols-1 gap-4 py-4">
-                <div>
-                  <Label htmlFor="flightNumber" className="mb-1.5 block">
-                    Flight Number
-                  </Label>
-                  <Input
-                    id="flightNumber"
-                    name="flightNumber"
-                    defaultValue={editing?.flightNumber || ""}
-                    required
-                  />
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="flightNumber">Flight Number</Label>
+                  <Select
+                    value={flightNumberValue}
+                    onValueChange={setFlightNumberValue}
+                    disabled={!!editing}
+                  >
+                    <SelectTrigger id="flightNumber" className="w-full">
+                      <SelectValue placeholder="Select flight number" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px]">
+                      {FLIGHT_NUMBERS.map((num) => (
+                        <SelectItem key={num} value={num}>
+                          {num}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {!!editing && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Flight number cannot be changed
+                    </p>
+                  )}
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor="source" className="mb-1.5 block">
-                      Source
-                    </Label>
-                    <Input
-                      id="source"
-                      name="source"
-                      defaultValue={editing?.source || ""}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="destination" className="mb-1.5 block">
-                      Destination
-                    </Label>
-                    <Input
-                      id="destination"
-                      name="destination"
-                      defaultValue={editing?.destination || ""}
-                      required
-                    />
-                  </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="source">Source</Label>
+                  <Select
+                    value={sourceValue}
+                    onValueChange={setSourceValue}
+                    disabled={!!editing}
+                  >
+                    <SelectTrigger id="source" className="w-full">
+                      <SelectValue placeholder="Select source city" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px]">
+                      {INDIAN_LOCATIONS.map((loc) => (
+                        <SelectItem key={loc} value={loc}>
+                          {loc}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {!!editing && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Source cannot be changed
+                    </p>
+                  )}
                 </div>
-                <div>
-                  <Label htmlFor="aircraftType" className="mb-1.5 block">
-                    Aircraft Type
-                  </Label>
+                <div className="grid gap-2">
+                  <Label htmlFor="destination">Destination</Label>
+                  <Select
+                    value={destinationValue}
+                    onValueChange={setDestinationValue}
+                    disabled={!!editing}
+                  >
+                    <SelectTrigger id="destination" className="w-full">
+                      <SelectValue placeholder="Select destination city" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px]">
+                      {INDIAN_LOCATIONS.map((loc) => (
+                        <SelectItem key={loc} value={loc}>
+                          {loc}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {!!editing && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Destination cannot be changed
+                    </p>
+                  )}
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="aircraftType">Aircraft Type</Label>
                   <Input
                     id="aircraftType"
                     name="aircraftType"
-                    defaultValue={editing?.aircraftType || "a320 neo"}
+                    value="A320 Neo"
+                    disabled
+                    className="w-full bg-muted"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    All AerisGo flights use A320 Neo aircraft
+                  </p>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="departureTime">Departure Time</Label>
+                  <Input
+                    id="departureTime"
+                    name="departureTime"
+                    type="datetime-local"
+                    placeholder="Select departure date and time"
+                    className="w-full"
+                    defaultValue={
+                      editing?.departureTime
+                        ? (() => {
+                            // Convert UTC to local timezone (IST) for display
+                            const date = new Date(editing.departureTime);
+                            // Get local time components
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(
+                              2,
+                              "0"
+                            );
+                            const day = String(date.getDate()).padStart(2, "0");
+                            const hours = String(date.getHours()).padStart(
+                              2,
+                              "0"
+                            );
+                            const minutes = String(date.getMinutes()).padStart(
+                              2,
+                              "0"
+                            );
+                            return `${year}-${month}-${day}T${hours}:${minutes}`;
+                          })()
+                        : ""
+                    }
+                    required
                   />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor="departureTime" className="mb-1.5 block">
-                      Departure Time
-                    </Label>
-                    <Input
-                      id="departureTime"
-                      name="departureTime"
-                      type="datetime-local"
-                      defaultValue={
-                        editing?.departureTime
-                          ? new Date(editing.departureTime)
-                              .toISOString()
-                              .slice(0, 16)
-                          : ""
-                      }
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="arrivalTime" className="mb-1.5 block">
-                      Arrival Time
-                    </Label>
-                    <Input
-                      id="arrivalTime"
-                      name="arrivalTime"
-                      type="datetime-local"
-                      defaultValue={
-                        editing?.arrivalTime
-                          ? new Date(editing.arrivalTime)
-                              .toISOString()
-                              .slice(0, 16)
-                          : ""
-                      }
-                      required
-                    />
-                  </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="arrivalTime">Arrival Time</Label>
+                  <Input
+                    id="arrivalTime"
+                    name="arrivalTime"
+                    type="datetime-local"
+                    placeholder="Select arrival date and time"
+                    className="w-full"
+                    defaultValue={
+                      editing?.arrivalTime
+                        ? (() => {
+                            // Convert UTC to local timezone (IST) for display
+                            const date = new Date(editing.arrivalTime);
+                            // Get local time components
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(
+                              2,
+                              "0"
+                            );
+                            const day = String(date.getDate()).padStart(2, "0");
+                            const hours = String(date.getHours()).padStart(
+                              2,
+                              "0"
+                            );
+                            const minutes = String(date.getMinutes()).padStart(
+                              2,
+                              "0"
+                            );
+                            return `${year}-${month}-${day}T${hours}:${minutes}`;
+                          })()
+                        : ""
+                    }
+                    required
+                  />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor="baseFare" className="mb-1.5 block">
-                      Base Fare (INR)
-                    </Label>
-                    <Input
-                      id="baseFare"
-                      name="baseFare"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      defaultValue={editing?.baseFare ?? ""}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="status" className="mb-1.5 block">
-                      Status
-                    </Label>
+                <div className="grid gap-2">
+                  <Label htmlFor="baseFare">Base Fare (INR)</Label>
+                  <Input
+                    id="baseFare"
+                    name="baseFare"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="Enter base fare amount"
+                    className="w-full"
+                    defaultValue={editing?.baseFare ?? ""}
+                    disabled={!!editing}
+                    required={!editing}
+                  />
+                  {!!editing && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Base fare cannot be changed
+                    </p>
+                  )}
+                </div>
+                {editing && (
+                  <div className="grid gap-2">
+                    <Label htmlFor="status">Status</Label>
                     <Select value={statusValue} onValueChange={setStatusValue}>
-                      <SelectTrigger id="status" className="h-9">
-                        <SelectValue />
+                      <SelectTrigger id="status" className="w-full">
+                        <SelectValue placeholder="Select flight status" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="scheduled">Scheduled</SelectItem>
                         <SelectItem value="delayed">Delayed</SelectItem>
                         <SelectItem value="cancelled">Cancelled</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
+                )}
               </div>
               <DialogFooter>
                 <Button
@@ -640,6 +777,20 @@ export default function ManagementFlights() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Seat Map Dialog */}
+        <ModernSeatMapDialog
+          open={seatMapDialogOpen}
+          onOpenChange={setSeatMapDialogOpen}
+          flight={selectedFlight}
+        />
+
+        {/* Passenger List Dialog */}
+        <PassengerListDialog
+          open={passengerDialogOpen}
+          onOpenChange={setPassengerDialogOpen}
+          flight={selectedFlight}
+        />
       </SidebarInset>
     </SidebarProvider>
   );

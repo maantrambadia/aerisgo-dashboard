@@ -1,6 +1,11 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router";
-import { LayoutDashboard, Plane, Users as UsersIcon } from "lucide-react";
+import {
+  LayoutDashboard,
+  Plane,
+  Users as UsersIcon,
+  Ticket,
+} from "lucide-react";
 import { NavMain } from "@/components/NavMain";
 import { NavUser } from "@/components/NavUser";
 import {
@@ -24,12 +29,15 @@ export function AppSidebar({ ...props }) {
       return [
         { title: "Dashboard", url: "/", icon: LayoutDashboard },
         { title: "Flights", url: "/flights", icon: Plane },
+        { title: "Bookings", url: "/bookings", icon: Ticket },
         { title: "Users", url: "/users", icon: UsersIcon },
       ];
     }
     if (roleLower === "staff") {
-      // Staff see the dashboard entry; management items remain hidden
-      return [{ title: "Dashboard", url: "/", icon: LayoutDashboard }];
+      return [
+        { title: "Dashboard", url: "/", icon: LayoutDashboard },
+        { title: "Bookings", url: "/bookings", icon: Ticket },
+      ];
     }
     // For other roles, hide items by default
     return [];

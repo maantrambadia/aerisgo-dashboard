@@ -44,7 +44,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Pencil, UserCheck, Users as UsersIcon, MoreVertical, RefreshCw } from "lucide-react";
+import {
+  Pencil,
+  UserCheck,
+  Users as UsersIcon,
+  MoreVertical,
+  RefreshCw,
+  Trash2,
+} from "lucide-react";
 
 export default function Users() {
   useDocumentTitle("Users");
@@ -54,6 +61,9 @@ export default function Users() {
   const [activeTab, setActiveTab] = useState("all");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingUser, setDeletingUser] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const [editForm, setEditForm] = useState({
     name: "",
     email: "",
@@ -157,7 +167,7 @@ export default function Users() {
       // Update local state
       setUsers((list) =>
         list.map((u) =>
-          (u._id === id || u.id === id) ? { ...u, ...data.user } : u
+          u._id === id || u.id === id ? { ...u, ...data.user } : u
         )
       );
 
@@ -167,6 +177,37 @@ export default function Users() {
       toast.error(msg);
     } finally {
       setUpdating(false);
+    }
+  }
+
+  function openDeleteDialog(user) {
+    setDeletingUser(user);
+    setDeleteDialogOpen(true);
+  }
+
+  function closeDeleteDialog() {
+    setDeleteDialogOpen(false);
+    setDeletingUser(null);
+  }
+
+  async function handleDeleteUser() {
+    if (!deletingUser) return;
+
+    setDeleting(true);
+    try {
+      const id = deletingUser._id || deletingUser.id;
+      await api.delete(`/users/${id}`);
+      toast.success("User deleted successfully");
+
+      // Remove from local state
+      setUsers((list) => list.filter((u) => u._id !== id && u.id !== id));
+
+      closeDeleteDialog();
+    } catch (err) {
+      const msg = err?.response?.data?.message || "Failed to delete user";
+      toast.error(msg);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -209,7 +250,9 @@ export default function Users() {
                     onClick={fetchUsers}
                     disabled={loading}
                   >
-                    <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+                    <RefreshCw
+                      className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
+                    />
                   </Button>
                 </div>
               </CardHeader>
@@ -315,8 +358,8 @@ export default function Users() {
                                         user.role === "admin"
                                           ? "default"
                                           : user.role === "staff"
-                                            ? "secondary"
-                                            : "outline"
+                                          ? "secondary"
+                                          : "outline"
                                       }
                                       className="capitalize"
                                     >
@@ -350,7 +393,9 @@ export default function Users() {
                                         </Button>
                                       </DropdownMenuTrigger>
                                       <DropdownMenuContent align="end">
-                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                        <DropdownMenuLabel>
+                                          Actions
+                                        </DropdownMenuLabel>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                           onClick={() => openEditDialog(user)}
@@ -369,6 +414,14 @@ export default function Users() {
                                               : "Approve User"}
                                           </DropdownMenuItem>
                                         )}
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                          onClick={() => openDeleteDialog(user)}
+                                          className="text-destructive focus:text-destructive"
+                                        >
+                                          <Trash2 className="mr-2 h-4 w-4" />
+                                          Delete User
+                                        </DropdownMenuItem>
                                       </DropdownMenuContent>
                                     </DropdownMenu>
                                   </TableCell>
@@ -432,7 +485,9 @@ export default function Users() {
                     className="rounded-l-none"
                     value={editForm.phone.replace("+91", "")}
                     onChange={(e) => {
-                      const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                      const digits = e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 10);
                       setEditForm({ ...editForm, phone: digits });
                     }}
                     maxLength={10}
@@ -541,6 +596,37 @@ export default function Users() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete User</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete {deletingUser?.name}? This action
+              cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={closeDeleteDialog}
+              disabled={deleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDeleteUser}
+              disabled={deleting}
+            >
+              {deleting ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </SidebarProvider>

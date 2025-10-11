@@ -6,9 +6,11 @@ import NotFound from "@/pages/NotFound.jsx";
 import RequireGuest from "@/components/RequireGuest.jsx";
 import RequireAuth from "@/components/RequireAuth.jsx";
 import RequireAdmin from "@/components/RequireAdmin.jsx";
-import ManagementFlights from "@/pages/ManagementFlights.jsx";
+import RequireAdminOrStaff from "@/components/RequireAdminOrStaff.jsx";
+import ManagementFlights from "@/pages/Flights.jsx";
 import Home from "@/pages/Home.jsx";
 import Users from "@/pages/Users.jsx";
+import Bookings from "@/pages/Bookings.jsx";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +52,14 @@ const router = createBrowserRouter([
       <RequireAdmin>
         <Users />
       </RequireAdmin>
+    ),
+  },
+  {
+    path: "/bookings",
+    element: (
+      <RequireAdminOrStaff>
+        <Bookings />
+      </RequireAdminOrStaff>
     ),
   },
   { path: "*", element: <NotFound /> },

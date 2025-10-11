@@ -170,7 +170,7 @@
 }
 
 :root {
-  --radius: 0.80rem;
+  --radius: 0.8rem;
   /* AerisGo theme */
   --gradient-top: #e3d0bf;
   --gradient-bottom: #541424;
@@ -189,8 +189,8 @@
   --accent: #e3d7cb;
   --accent-foreground: #541424;
   --destructive: #dc2626; /* keep a clear red for destructive */
-  --border: rgba(84, 20, 36, 0.30);
-  --input: rgba(84, 20, 36, 0.30);
+  --border: rgba(84, 20, 36, 0.3);
+  --input: rgba(84, 20, 36, 0.3);
   --ring: #541424;
   /* keep charts reasonable defaults */
   --chart-1: #541424;
@@ -237,6 +237,29 @@
   }
   small {
     @apply text-sm text-muted-foreground;
+  }
+
+  /* Hide scrollbar for all browsers while keeping scroll functionality */
+  /* For Webkit browsers (Chrome, Safari, Edge) */
+  *::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+
+  /* For Firefox */
+  * {
+    scrollbar-width: none;
+  }
+
+  /* For IE and Edge (legacy) */
+  * {
+    -ms-overflow-style: none;
   }
 }
 
