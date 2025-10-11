@@ -61,6 +61,7 @@ export default function Bookings() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
+  const [limit] = useState(10);
   const [loading, setLoading] = useState(true);
   const [fetching, setFetching] = useState(false);
 

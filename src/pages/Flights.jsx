@@ -85,15 +85,16 @@ export default function ManagementFlights() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
+  const [limit] = useState(10);
   const [loading, setLoading] = useState(true);
   const [fetching, setFetching] = useState(false);
 
-  const [q, setQ] = useState("");
-  const [source, setSource] = useState("");
-  const [destination, setDestination] = useState("");
-  const [status, setStatus] = useState("");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
+  const [q] = useState("");
+  const [source] = useState("");
+  const [destination] = useState("");
+  const [status] = useState("");
+  const [dateFrom] = useState("");
+  const [dateTo] = useState("");
   const [activeTab, setActiveTab] = useState("all");
 
   const [drawerOpen, setDrawerOpen] = useState(false);

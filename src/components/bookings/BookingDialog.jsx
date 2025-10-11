@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -174,31 +174,34 @@ export default function BookingDialog({
     }
   }
 
-  async function calculatePrice(travelClass, isExtraLegroom) {
-    if (!formData.flightId || !pricingConfig) return;
+  const calculatePrice = useCallback(
+    async (travelClass, isExtraLegroom) => {
+      if (!formData.flightId || !pricingConfig) return;
 
-    const selectedFlight = flights.find((f) => f._id === formData.flightId);
-    if (!selectedFlight) return;
+      const selectedFlight = flights.find((f) => f._id === formData.flightId);
+      if (!selectedFlight) return;
 
-    try {
-      setCalculatingPrice(true);
+      try {
+        setCalculatingPrice(true);
 
-      // Get detailed breakdown
-      const { data } = await api.post("/pricing/breakdown", {
-        baseFare: selectedFlight.baseFare,
-        travelClass,
-        isExtraLegroom,
-      });
+        // Get detailed breakdown
+        const { data } = await api.post("/pricing/breakdown", {
+          baseFare: selectedFlight.baseFare,
+          travelClass,
+          isExtraLegroom,
+        });
 
-      setPriceBreakdown(data);
-      setFormData((prev) => ({ ...prev, price: data.total.toString() }));
-    } catch (err) {
-      console.error("Failed to calculate price:", err);
-      setPriceBreakdown(null);
-    } finally {
-      setCalculatingPrice(false);
-    }
-  }
+        setPriceBreakdown(data);
+        setFormData((prev) => ({ ...prev, price: data.total.toString() }));
+      } catch (err) {
+        console.error("Failed to calculate price:", err);
+        setPriceBreakdown(null);
+      } finally {
+        setCalculatingPrice(false);
+      }
+    },
+    [formData.flightId, pricingConfig, flights]
+  );
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -238,7 +241,6 @@ export default function BookingDialog({
     business: availableSeats.filter((s) => s.travelClass === "business"),
     economy: availableSeats.filter((s) => s.travelClass === "economy"),
   };
-
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
