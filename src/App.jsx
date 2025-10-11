@@ -1,23 +1,28 @@
+import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router";
-import SignIn from "@/pages/SignIn.jsx";
-import RequestAccess from "@/pages/RequestAccess.jsx";
-import PendingApproval from "@/pages/PendingApproval.jsx";
-import NotFound from "@/pages/NotFound.jsx";
 import RequireGuest from "@/components/RequireGuest.jsx";
 import RequireAuth from "@/components/RequireAuth.jsx";
 import RequireAdmin from "@/components/RequireAdmin.jsx";
 import RequireAdminOrStaff from "@/components/RequireAdminOrStaff.jsx";
-import ManagementFlights from "@/pages/Flights.jsx";
-import Home from "@/pages/Home.jsx";
-import Users from "@/pages/Users.jsx";
-import Bookings from "@/pages/Bookings.jsx";
+
+// Lazy load pages
+const SignIn = lazy(() => import("@/pages/SignIn.jsx"));
+const RequestAccess = lazy(() => import("@/pages/RequestAccess.jsx"));
+const PendingApproval = lazy(() => import("@/pages/PendingApproval.jsx"));
+const NotFound = lazy(() => import("@/pages/NotFound.jsx"));
+const ManagementFlights = lazy(() => import("@/pages/Flights.jsx"));
+const Home = lazy(() => import("@/pages/Home.jsx"));
+const Users = lazy(() => import("@/pages/Users.jsx"));
+const Bookings = lazy(() => import("@/pages/Bookings.jsx"));
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <RequireAuth>
-        <Home />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Home />
+        </Suspense>
       </RequireAuth>
     ),
   },
@@ -25,7 +30,9 @@ const router = createBrowserRouter([
     path: "/sign-in",
     element: (
       <RequireGuest>
-        <SignIn />
+        <Suspense fallback={<div>Loading...</div>}>
+          <SignIn />
+        </Suspense>
       </RequireGuest>
     ),
   },
@@ -33,16 +40,27 @@ const router = createBrowserRouter([
     path: "/request-access",
     element: (
       <RequireGuest>
-        <RequestAccess />
+        <Suspense fallback={<div>Loading...</div>}>
+          <RequestAccess />
+        </Suspense>
       </RequireGuest>
     ),
   },
-  { path: "/pending-approval", element: <PendingApproval /> },
+  {
+    path: "/pending-approval",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <PendingApproval />
+      </Suspense>
+    ),
+  },
   {
     path: "/flights",
     element: (
       <RequireAdmin>
-        <ManagementFlights />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ManagementFlights />
+        </Suspense>
       </RequireAdmin>
     ),
   },
@@ -50,7 +68,9 @@ const router = createBrowserRouter([
     path: "/users",
     element: (
       <RequireAdmin>
-        <Users />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Users />
+        </Suspense>
       </RequireAdmin>
     ),
   },
@@ -58,11 +78,20 @@ const router = createBrowserRouter([
     path: "/bookings",
     element: (
       <RequireAdminOrStaff>
-        <Bookings />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Bookings />
+        </Suspense>
       </RequireAdminOrStaff>
     ),
   },
-  { path: "*", element: <NotFound /> },
+  {
+    path: "*",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <NotFound />
+      </Suspense>
+    ),
+  },
 ]);
 
 export default router;
