@@ -75,6 +75,36 @@ export default function BookingDialog({
     }
   }, [open, booking]);
 
+  // Define calculatePrice before it's used in useEffect
+  const calculatePrice = useCallback(
+    async (travelClass, isExtraLegroom) => {
+      if (!formData.flightId || !pricingConfig) return;
+
+      const selectedFlight = flights.find((f) => f._id === formData.flightId);
+      if (!selectedFlight) return;
+
+      try {
+        setCalculatingPrice(true);
+
+        // Get detailed breakdown
+        const { data } = await api.post("/pricing/breakdown", {
+          baseFare: selectedFlight.baseFare,
+          travelClass,
+          isExtraLegroom,
+        });
+
+        setPriceBreakdown(data);
+        setFormData((prev) => ({ ...prev, price: data.total.toString() }));
+      } catch (err) {
+        console.error("Failed to calculate price:", err);
+        setPriceBreakdown(null);
+      } finally {
+        setCalculatingPrice(false);
+      }
+    },
+    [formData.flightId, pricingConfig, flights]
+  );
+
   // Calculate price breakdown when editing and pricing config is loaded
   useEffect(() => {
     if (
@@ -173,35 +203,6 @@ export default function BookingDialog({
       setSeats([]);
     }
   }
-
-  const calculatePrice = useCallback(
-    async (travelClass, isExtraLegroom) => {
-      if (!formData.flightId || !pricingConfig) return;
-
-      const selectedFlight = flights.find((f) => f._id === formData.flightId);
-      if (!selectedFlight) return;
-
-      try {
-        setCalculatingPrice(true);
-
-        // Get detailed breakdown
-        const { data } = await api.post("/pricing/breakdown", {
-          baseFare: selectedFlight.baseFare,
-          travelClass,
-          isExtraLegroom,
-        });
-
-        setPriceBreakdown(data);
-        setFormData((prev) => ({ ...prev, price: data.total.toString() }));
-      } catch (err) {
-        console.error("Failed to calculate price:", err);
-        setPriceBreakdown(null);
-      } finally {
-        setCalculatingPrice(false);
-      }
-    },
-    [formData.flightId, pricingConfig, flights]
-  );
 
   async function handleSubmit(e) {
     e.preventDefault();
