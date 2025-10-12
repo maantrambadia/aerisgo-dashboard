@@ -51,7 +51,9 @@ import {
   MoreVertical,
   RefreshCw,
   Trash2,
+  Coins,
 } from "lucide-react";
+import RewardsManagementDialog from "@/components/users/RewardsManagementDialog";
 
 export default function Users() {
   useDocumentTitle("Users");
@@ -64,6 +66,8 @@ export default function Users() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingUser, setDeletingUser] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [rewardsDialogOpen, setRewardsDialogOpen] = useState(false);
+  const [rewardsUser, setRewardsUser] = useState(null);
   const [editForm, setEditForm] = useState({
     name: "",
     email: "",
@@ -188,6 +192,16 @@ export default function Users() {
   function closeDeleteDialog() {
     setDeleteDialogOpen(false);
     setDeletingUser(null);
+  }
+
+  function openRewardsDialog(user) {
+    setRewardsUser(user);
+    setRewardsDialogOpen(true);
+  }
+
+  function closeRewardsDialog() {
+    setRewardsDialogOpen(false);
+    setRewardsUser(null);
   }
 
   async function handleDeleteUser() {
@@ -414,6 +428,19 @@ export default function Users() {
                                               : "Approve User"}
                                           </DropdownMenuItem>
                                         )}
+                                        {user.role === "passenger" && (
+                                          <>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem
+                                              onClick={() =>
+                                                openRewardsDialog(user)
+                                              }
+                                            >
+                                              <Coins className="mr-2 h-4 w-4" />
+                                              Manage Rewards
+                                            </DropdownMenuItem>
+                                          </>
+                                        )}
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                           onClick={() => openDeleteDialog(user)}
@@ -629,6 +656,13 @@ export default function Users() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Rewards Management Dialog */}
+      <RewardsManagementDialog
+        user={rewardsUser}
+        open={rewardsDialogOpen}
+        onOpenChange={setRewardsDialogOpen}
+      />
     </SidebarProvider>
   );
 }
