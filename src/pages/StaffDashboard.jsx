@@ -87,11 +87,6 @@ export default function StaffDashboard() {
       const flights = (res.data.items || []).filter(
         (flight) => flight.status === "scheduled" || flight.status === "delayed"
       );
-
-      console.log(
-        `Today's flights (${startOfDay} to ${endOfDay}):`,
-        flights.length
-      );
       setTodayFlights(flights);
     } catch (err) {
       console.error("Error fetching today's flights:", err);
