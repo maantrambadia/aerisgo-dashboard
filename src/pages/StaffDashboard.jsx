@@ -79,10 +79,20 @@ export default function StaffDashboard() {
         params: {
           dateFrom: startOfDay,
           dateTo: endOfDay,
-          status: "scheduled,delayed",
+          limit: 100, // Get more flights for today
         },
       });
-      setTodayFlights(res.data.items || []);
+
+      // Filter for scheduled and delayed flights on client side
+      const flights = (res.data.items || []).filter(
+        (flight) => flight.status === "scheduled" || flight.status === "delayed"
+      );
+
+      console.log(
+        `Today's flights (${startOfDay} to ${endOfDay}):`,
+        flights.length
+      );
+      setTodayFlights(flights);
     } catch (err) {
       console.error("Error fetching today's flights:", err);
     }
@@ -357,7 +367,13 @@ export default function StaffDashboard() {
                 {todayFlights.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">
                     <Plane className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No flights scheduled for today</p>
+                    <p className="font-medium">
+                      No flights scheduled for today
+                    </p>
+                    <p className="text-sm mt-2">
+                      {formatDate(new Date())} - Create flights in the Flights
+                      page
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-3">
