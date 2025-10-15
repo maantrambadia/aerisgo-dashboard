@@ -2,25 +2,22 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Percent } from "lucide-react";
+import { Percent, TrendingUp } from "lucide-react";
 
 const chartConfig = {
   loadFactor: {
     label: "Load Factor",
     color: "var(--chart-1)",
-  },
-  bookedSeats: {
-    label: "Booked Seats",
-    color: "var(--chart-2)",
   },
 };
 
@@ -41,50 +38,27 @@ export function LoadFactorChart({ data = [] }) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2">
-              <Percent className="h-5 w-5" />
-              Load Factor Report
-            </CardTitle>
-            <CardDescription>
-              Average load factor: {averageLoadFactor}%
-            </CardDescription>
-          </div>
-        </div>
+        <CardTitle className="flex items-center gap-2">
+          <Percent className="h-5 w-5" />
+          Load Factor Report
+        </CardTitle>
+        <CardDescription>
+          Flight occupancy rates across all routes
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <AreaChart data={chartData}>
-            <defs>
-              <linearGradient id="fillLoadFactor" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-loadFactor)"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-loadFactor)"
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-            </defs>
-            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+        <ChartContainer config={chartConfig}>
+          <BarChart accessibilityLayer data={chartData}>
+            <CartesianGrid vertical={false} />
             <XAxis
               dataKey="name"
               tickLine={false}
+              tickMargin={10}
               axisLine={false}
-              tickMargin={8}
               tickFormatter={(value) => value.slice(0, 6)}
             />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => `${value}%`}
-            />
             <ChartTooltip
+              cursor={false}
               content={
                 <ChartTooltipContent
                   labelFormatter={(value, payload) => {
@@ -95,46 +69,37 @@ export function LoadFactorChart({ data = [] }) {
                         <div className="text-xs text-muted-foreground">
                           {item?.route}
                         </div>
+                        <div className="text-xs text-muted-foreground">
+                          {item?.bookedSeats}/{item?.totalSeats} seats
+                        </div>
                       </div>
                     );
                   }}
-                  formatter={(value, name, item) => {
-                    if (name === "loadFactor") {
-                      return [
-                        <div
-                          key="load"
-                          className="flex items-center justify-between gap-4"
-                        >
-                          <span>Load Factor</span>
-                          <span className="font-semibold">{value}%</span>
-                        </div>,
-                      ];
-                    }
-                    return [
-                      <div
-                        key="seats"
-                        className="flex items-center justify-between gap-4"
-                      >
-                        <span>Occupancy</span>
-                        <span className="font-semibold">
-                          {item.payload.bookedSeats}/{item.payload.totalSeats}
-                        </span>
-                      </div>,
-                    ];
-                  }}
+                  formatter={(value) => [`${value}%`, "Load Factor"]}
                 />
               }
             />
-            <Area
+            <Bar
               dataKey="loadFactor"
-              type="natural"
-              fill="url(#fillLoadFactor)"
-              stroke="var(--color-loadFactor)"
-              strokeWidth={2}
+              fill="var(--color-loadFactor)"
+              radius={8}
             />
-          </AreaChart>
+          </BarChart>
         </ChartContainer>
       </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 leading-none font-medium">
+          Average load factor: {averageLoadFactor}%{" "}
+          {averageLoadFactor >= 70 ? (
+            <TrendingUp className="h-4 w-4 text-green-500" />
+          ) : (
+            <Percent className="h-4 w-4 text-amber-500" />
+          )}
+        </div>
+        <div className="text-muted-foreground leading-none">
+          Showing occupancy rates for recent flights
+        </div>
+      </CardFooter>
     </Card>
   );
 }
