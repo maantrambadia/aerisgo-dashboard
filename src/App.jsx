@@ -5,13 +5,15 @@ import RequireAuth from "@/components/RequireAuth.jsx";
 import RequireAdmin from "@/components/RequireAdmin.jsx";
 import RequireAdminOrStaff from "@/components/RequireAdminOrStaff.jsx";
 import LoadingFallback from "@/components/LoadingFallback.jsx";
+import AuthLoadingFallback from "@/components/AuthLoadingFallback.jsx";
 
 // Lazy load pages
 const SignIn = lazy(() => import("@/pages/SignIn.jsx"));
 const RequestAccess = lazy(() => import("@/pages/RequestAccess.jsx"));
 const PendingApproval = lazy(() => import("@/pages/PendingApproval.jsx"));
 const NotFound = lazy(() => import("@/pages/NotFound.jsx"));
-const ManagementFlights = lazy(() => import("@/pages/Flights.jsx"));
+
+const Flights = lazy(() => import("@/pages/Flights.jsx"));
 const Home = lazy(() => import("@/pages/Home.jsx"));
 const Users = lazy(() => import("@/pages/Users.jsx"));
 const Bookings = lazy(() => import("@/pages/Bookings.jsx"));
@@ -31,7 +33,7 @@ const router = createBrowserRouter([
     path: "/sign-in",
     element: (
       <RequireGuest>
-        <Suspense fallback={<LoadingFallback />}>
+        <Suspense fallback={<AuthLoadingFallback />}>
           <SignIn />
         </Suspense>
       </RequireGuest>
@@ -41,7 +43,7 @@ const router = createBrowserRouter([
     path: "/request-access",
     element: (
       <RequireGuest>
-        <Suspense fallback={<LoadingFallback />}>
+        <Suspense fallback={<AuthLoadingFallback />}>
           <RequestAccess />
         </Suspense>
       </RequireGuest>
@@ -50,7 +52,7 @@ const router = createBrowserRouter([
   {
     path: "/pending-approval",
     element: (
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<AuthLoadingFallback />}>
         <PendingApproval />
       </Suspense>
     ),
@@ -60,7 +62,7 @@ const router = createBrowserRouter([
     element: (
       <RequireAdmin>
         <Suspense fallback={<LoadingFallback />}>
-          <ManagementFlights />
+          <Flights />
         </Suspense>
       </RequireAdmin>
     ),
@@ -88,7 +90,7 @@ const router = createBrowserRouter([
   {
     path: "*",
     element: (
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<AuthLoadingFallback />}>
         <NotFound />
       </Suspense>
     ),
