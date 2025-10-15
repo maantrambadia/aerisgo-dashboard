@@ -46,10 +46,12 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     fetchFlightsReport();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flightsPeriod]);
 
   async function fetchAllData() {
@@ -71,15 +73,6 @@ export default function AdminDashboard() {
     }
   }
 
-  async function fetchDashboardStats() {
-    try {
-      const res = await api.get("/analytics/dashboard");
-      setStats(res.data.overview || res.data);
-    } catch (err) {
-      console.error("Error fetching dashboard stats:", err);
-    }
-  }
-
   async function fetchFlightsReport() {
     try {
       const res = await api.get("/analytics/flights-operated", {
@@ -88,6 +81,15 @@ export default function AdminDashboard() {
       setFlightsReport(res.data.data || []);
     } catch (err) {
       console.error("Error fetching flights report:", err);
+    }
+  }
+
+  async function fetchDashboardStats() {
+    try {
+      const res = await api.get("/analytics/dashboard");
+      setStats(res.data.overview || res.data);
+    } catch (err) {
+      console.error("Error fetching dashboard stats:", err);
     }
   }
 

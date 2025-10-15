@@ -199,11 +199,6 @@ export default function Users() {
     setRewardsDialogOpen(true);
   }
 
-  function closeRewardsDialog() {
-    setRewardsDialogOpen(false);
-    setRewardsUser(null);
-  }
-
   async function handleDeleteUser() {
     if (!deletingUser) return;
 

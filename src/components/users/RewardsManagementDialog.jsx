@@ -40,6 +40,7 @@ export default function RewardsManagementDialog({ user, open, onOpenChange }) {
     if (open && user) {
       fetchRewardsData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, user]);
 
   async function fetchRewardsData() {
