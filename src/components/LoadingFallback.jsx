@@ -8,12 +8,9 @@ export default function LoadingFallback() {
       <AppSidebar variant="inset" />
       <SidebarInset className="dark:bg-black/20">
         {/* Header Skeleton */}
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <Skeleton className="h-8 w-8 rounded-md" />
-          <Skeleton className="h-6 w-48" />
-          <div className="ml-auto flex items-center gap-2">
-            <Skeleton className="h-8 w-8 rounded-full" />
-          </div>
+        <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
+          <Skeleton className="h-6 w-6 rounded-md" />
+          <Skeleton className="h-4 w-24" />
         </header>
 
         {/* Content Skeleton */}
