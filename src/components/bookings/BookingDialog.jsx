@@ -218,7 +218,7 @@ export default function BookingDialog({
         await api.put(`/bookings/${booking._id}`, payload);
         toast.success("Booking updated successfully");
       } else {
-        await api.post("/bookings", payload);
+        await api.post("/bookings/admin", payload);
         toast.success("Booking created successfully");
       }
 
