@@ -1,4 +1,14 @@
-// AerisGo Flight Numbers
+/**
+ * AerisGo Flight Numbers
+ *
+ * Static reference data for flight numbers.
+ * Flight numbers follow the pattern: AG + series number
+ * - AG101-AG110: Series 1
+ * - AG201-AG210: Series 2
+ * - AG301-AG310: Series 3
+ * - AG401-AG410: Series 4
+ * - AG501-AG510: Series 5
+ */
 export const FLIGHT_NUMBERS = [
   "AG101",
   "AG102",
@@ -52,53 +62,12 @@ export const FLIGHT_NUMBERS = [
   "AG510",
 ];
 
-// Indian Cities
-export const INDIAN_LOCATIONS = [
-  // Major Metro Cities
-  "Mumbai, India",
-  "Delhi, India",
-  "Bangalore, India",
-  "Hyderabad, India",
-  "Chennai, India",
-  "Kolkata, India",
-  "Pune, India",
-  "Ahmedabad, India",
-
-  // State Capitals and Major Cities
-  "Jaipur, India",
-  "Lucknow, India",
-  "Chandigarh, India",
-  "Bhopal, India",
-  "Patna, India",
-  "Thiruvananthapuram, India",
-  "Kochi, India",
-  "Guwahati, India",
-  "Bhubaneswar, India",
-  "Ranchi, India",
-  "Raipur, India",
-  "Indore, India",
-  "Nagpur, India",
-  "Surat, India",
-  "Vadodara, India",
-  "Coimbatore, India",
-  "Visakhapatnam, India",
-  "Vijayawada, India",
-  "Amritsar, India",
-  "Varanasi, India",
-  "Agra, India",
-  "Goa, India",
-  "Srinagar, India",
-  "Jammu, India",
-  "Dehradun, India",
-  "Shimla, India",
-  "Imphal, India",
-  "Shillong, India",
-  "Aizawl, India",
-  "Kohima, India",
-  "Agartala, India",
-  "Gangtok, India",
-  "Itanagar, India",
-  "Dispur, India",
-  "Panaji, India",
-  "Port Blair, India",
-];
+/**
+ * NOTE: City/Airport data has been moved to a centralized API.
+ * Use the /airports endpoints instead of hardcoded lists.
+ *
+ * See:
+ * - Backend: src/config/airports.js
+ * - Mobile: lib/airports.js
+ * - Dashboard: lib/airports.js
+ */

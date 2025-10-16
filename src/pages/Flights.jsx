@@ -71,7 +71,8 @@ import {
   Users,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext.jsx";
-import { FLIGHT_NUMBERS, INDIAN_LOCATIONS } from "@/utils/flightData";
+import { FLIGHT_NUMBERS } from "@/utils/flightData";
+import { getAllAirports } from "@/lib/airports";
 import ModernSeatMapDialog from "@/components/flights/ModernSeatMapDialog";
 import PassengerListDialog from "@/components/flights/PassengerListDialog";
 
@@ -105,6 +106,10 @@ export default function ManagementFlights() {
   const [sourceValue, setSourceValue] = useState("");
   const [destinationValue, setDestinationValue] = useState("");
 
+  // Airports state
+  const [airports, setAirports] = useState([]);
+  const [airportsLoading, setAirportsLoading] = useState(false);
+
   // Delete dialog state
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -121,6 +126,23 @@ export default function ManagementFlights() {
     () => ({ q, source, destination, status, dateFrom, dateTo }),
     [q, source, destination, status, dateFrom, dateTo]
   );
+
+  // Load airports on mount
+  useEffect(() => {
+    const loadAirports = async () => {
+      try {
+        setAirportsLoading(true);
+        const data = await getAllAirports();
+        setAirports(data);
+      } catch (error) {
+        console.error("Failed to load airports:", error);
+        toast.error("Failed to load airports data");
+      } finally {
+        setAirportsLoading(false);
+      }
+    };
+    loadAirports();
+  }, []);
 
   async function fetchFlights(opts = {}) {
     const params = new URLSearchParams();
@@ -567,15 +589,28 @@ export default function ManagementFlights() {
                   <Select
                     value={sourceValue}
                     onValueChange={setSourceValue}
-                    disabled={!!editing}
+                    disabled={!!editing || airportsLoading}
                   >
                     <SelectTrigger id="source" className="w-full">
-                      <SelectValue placeholder="Select source city" />
+                      <SelectValue
+                        placeholder={
+                          airportsLoading
+                            ? "Loading airports..."
+                            : "Select source city"
+                        }
+                      />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px]">
-                      {INDIAN_LOCATIONS.map((loc) => (
-                        <SelectItem key={loc} value={loc}>
-                          {loc}
+                      {airports.map((airport) => (
+                        <SelectItem key={airport.code} value={airport.city}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">
+                              {airport.city} ({airport.code})
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {airport.name}
+                            </span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -591,15 +626,28 @@ export default function ManagementFlights() {
                   <Select
                     value={destinationValue}
                     onValueChange={setDestinationValue}
-                    disabled={!!editing}
+                    disabled={!!editing || airportsLoading}
                   >
                     <SelectTrigger id="destination" className="w-full">
-                      <SelectValue placeholder="Select destination city" />
+                      <SelectValue
+                        placeholder={
+                          airportsLoading
+                            ? "Loading airports..."
+                            : "Select destination city"
+                        }
+                      />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px]">
-                      {INDIAN_LOCATIONS.map((loc) => (
-                        <SelectItem key={loc} value={loc}>
-                          {loc}
+                      {airports.map((airport) => (
+                        <SelectItem key={airport.code} value={airport.city}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">
+                              {airport.city} ({airport.code})
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {airport.name}
+                            </span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
