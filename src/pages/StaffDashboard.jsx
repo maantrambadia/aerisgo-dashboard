@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import api from "@/lib/axios";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
 import { LoadFactorChart } from "@/components/charts/LoadFactorChart";
+import SeatMapView from "@/components/flights/SeatMapView";
 import {
   Plane,
   Users,
@@ -47,6 +48,7 @@ export default function StaffDashboard() {
   const [totalFlights, setTotalFlights] = useState(0);
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [passengers, setPassengers] = useState([]);
+  const [seats, setSeats] = useState([]);
   const [loadingPassengers, setLoadingPassengers] = useState(false);
 
   useEffect(() => {
@@ -116,8 +118,12 @@ export default function StaffDashboard() {
   async function fetchPassengers(flightId) {
     try {
       setLoadingPassengers(true);
-      const res = await api.get(`/bookings/passengers/${flightId}`);
-      setPassengers(res.data.passengers || []);
+      const [passengersRes, seatsRes] = await Promise.all([
+        api.get(`/bookings/passengers/${flightId}`),
+        api.get(`/seats/flight/${flightId}`),
+      ]);
+      setPassengers(passengersRes.data.passengers || []);
+      setSeats(seatsRes.data.seats || []);
     } catch (err) {
       console.error("Error fetching passengers:", err);
       toast.error("Failed to load passenger list");
@@ -167,91 +173,6 @@ export default function StaffDashboard() {
       month: "short",
       year: "numeric",
     });
-  }
-
-  // Generate seat map visualization
-  function renderSeatMap() {
-    if (!passengers.length) return null;
-
-    const seatMap = {};
-    passengers.forEach((p) => {
-      seatMap[p.seatNumber] = p;
-    });
-
-    // A320 Neo layout: 30 rows, 6 seats per row (A-F)
-    const rows = [];
-    for (let row = 1; row <= 30; row++) {
-      const seats = ["A", "B", "C", "D", "E", "F"].map((letter) => {
-        const seatNumber = `${row}${letter}`;
-        const passenger = seatMap[seatNumber];
-        return { seatNumber, passenger };
-      });
-      rows.push({ row, seats });
-    }
-
-    const getRowClass = (row) => {
-      if (row <= 2) return "First Class";
-      if (row <= 7) return "Business";
-      return "Economy";
-    };
-
-    return (
-      <div className="space-y-2">
-        <div className="flex items-center gap-4 text-xs mb-4">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-primary rounded" />
-            <span>Booked</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-muted border rounded" />
-            <span>Available</span>
-          </div>
-        </div>
-        <div className="max-h-[400px] overflow-y-auto space-y-1">
-          {rows.map(({ row, seats }) => (
-            <div key={row} className="flex items-center gap-2">
-              <div className="w-8 text-xs text-muted-foreground text-right">
-                {row}
-              </div>
-              <div className="flex gap-1">
-                {seats.slice(0, 3).map(({ seatNumber, passenger }) => (
-                  <div
-                    key={seatNumber}
-                    className={`w-6 h-6 rounded text-[8px] flex items-center justify-center ${
-                      passenger
-                        ? "bg-primary text-primary-foreground font-semibold"
-                        : "bg-muted border"
-                    }`}
-                    title={passenger ? passenger.userId?.name : "Available"}
-                  >
-                    {seatNumber.slice(-1)}
-                  </div>
-                ))}
-                <div className="w-4" />
-                {seats.slice(3, 6).map(({ seatNumber, passenger }) => (
-                  <div
-                    key={seatNumber}
-                    className={`w-6 h-6 rounded text-[8px] flex items-center justify-center ${
-                      passenger
-                        ? "bg-primary text-primary-foreground font-semibold"
-                        : "bg-muted border"
-                    }`}
-                    title={passenger ? passenger.userId?.name : "Available"}
-                  >
-                    {seatNumber.slice(-1)}
-                  </div>
-                ))}
-              </div>
-              {[1, 3, 8].includes(row) && (
-                <div className="text-[10px] text-muted-foreground ml-2">
-                  {getRowClass(row)}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
   }
 
   if (loading) {
@@ -429,7 +350,7 @@ export default function StaffDashboard() {
         open={!!selectedFlight}
         onOpenChange={() => setSelectedFlight(null)}
       >
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogContent className="!w-[40vw] !max-w-none max-h-[90vh] overflow-hidden flex flex-col sm:!max-w-none">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Plane className="h-5 w-5" />
@@ -508,7 +429,45 @@ export default function StaffDashboard() {
                 value="seatmap"
                 className="flex-1 overflow-y-auto mt-4"
               >
-                {renderSeatMap()}
+                {/* Legend */}
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-9 w-11 rounded-lg border-2 border-purple-500 bg-purple-400/30 flex items-center justify-center">
+                      <Armchair className="h-4 w-4 text-purple-800" />
+                    </div>
+                    <span className="font-medium">First Class</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-9 w-11 rounded-lg border-2 border-blue-500 bg-blue-400/30 flex items-center justify-center">
+                      <Armchair className="h-4 w-4 text-blue-800" />
+                    </div>
+                    <span className="font-medium">Business</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-9 w-11 rounded-lg border-2 border-gray-400 bg-gray-200 flex items-center justify-center">
+                      <Armchair className="h-4 w-4 text-gray-700" />
+                    </div>
+                    <span className="font-medium">Economy</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-9 w-11 rounded-lg border-2 border-yellow-500 bg-yellow-400/30 flex items-center justify-center">
+                      <Armchair className="h-4 w-4 text-yellow-800" />
+                    </div>
+                    <span className="font-medium">Extra Legroom</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-9 w-11 rounded-lg border-2 border-red-500 bg-red-500/20 flex items-center justify-center relative">
+                      <Armchair className="h-4 w-4 text-red-700" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-full h-0.5 bg-red-600 rotate-45" />
+                      </div>
+                    </div>
+                    <span className="font-medium">Booked</span>
+                  </div>
+                </div>
+
+                {/* Seat Map */}
+                <SeatMapView seats={seats} passengers={passengers} />
               </TabsContent>
             </Tabs>
           )}
