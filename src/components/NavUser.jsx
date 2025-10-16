@@ -61,7 +61,7 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="bg-transparent focus:bg-sidebar-accent/60 data-[state=open]:bg-sidebar-accent text-sidebar-foreground
+              className="bg-transparent data-[state=open]:bg-sidebar-accent text-sidebar-foreground
               hover:!text-sidebar-accent-foreground hover:[&_span]:!text-sidebar-accent-foreground hover:[&_svg]:!text-sidebar-accent-foreground
               data-[state=open]:!text-sidebar-accent-foreground data-[state=open]:[&_span]:!text-sidebar-accent-foreground data-[state=open]:[&_svg]:!text-sidebar-accent-foreground
               data-[state=open]:[&_span.subline]:opacity-100 data-[state=open]:[&_span.navuser-badge]:bg-[hsl(var(--sidebar-accent-foreground))]/15"
