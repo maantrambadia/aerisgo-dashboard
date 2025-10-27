@@ -1,5 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { toast } from "sonner";
 import api from "@/lib/axios";
 
@@ -20,40 +27,46 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = useCallback(async ({ email, password, remember }) => {
-    try {
-      const { data } = await api.post("/auth/sign-in/web", {
-        email,
-        password,
-        remember,
-      });
-      toast.success(data.message || "Logged in");
-      await refresh();
-      return data.user;
-    } catch (err) {
-      const msg = err?.response?.data?.message || "Login failed";
-      toast.error(msg);
-      throw err;
-    }
-  }, [refresh]);
+  const login = useCallback(
+    async ({ email, password, remember }) => {
+      try {
+        const { data } = await api.post("/auth/sign-in/web", {
+          email,
+          password,
+          remember,
+        });
+        toast.success(data.message || "Logged in");
+        await refresh();
+        return data.user;
+      } catch (err) {
+        const msg = err?.response?.data?.message || "Login failed";
+        toast.error(msg);
+        throw err;
+      }
+    },
+    [refresh]
+  );
 
-  const requestAccess = useCallback(async ({ name, email, phone, password, gender }) => {
-    try {
-      const { data } = await api.post("/auth/request-access", {
-        name,
-        email,
-        phone,
-        password,
-        gender,
-      });
-      toast.success(data.message || "Request submitted");
-      return data.user;
-    } catch (err) {
-      const msg = err?.response?.data?.message || "Request failed";
-      toast.error(msg);
-      throw err;
-    }
-  }, []);
+  const requestAccess = useCallback(
+    async ({ name, email, phone, password, gender }) => {
+      try {
+        const { data } = await api.post("/auth/request-access", {
+          name,
+          email,
+          phone,
+          password,
+          gender,
+        });
+        toast.success(data.message || "Request submitted");
+        return data.user;
+      } catch (err) {
+        const msg = err?.response?.data?.message || "Request failed";
+        toast.error(msg);
+        throw err;
+      }
+    },
+    []
+  );
 
   const logout = useCallback(async () => {
     try {

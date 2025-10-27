@@ -88,30 +88,33 @@ export function FlightsAreaChart({ data = [], period, onPeriodChange }) {
           config={chartConfig}
           className="aspect-auto h-[300px] w-full"
         >
-          <AreaChart data={chartData}>
+          <AreaChart
+            data={chartData}
+            margin={{ top: 30, right: 12, left: 12, bottom: 0 }}
+          >
             <defs>
               <linearGradient id="fillFlights" x1="0" y1="0" x2="0" y2="1">
                 <stop
-                  offset="5%"
+                  offset="10%"
                   stopColor="var(--color-flights)"
-                  stopOpacity={0.8}
+                  stopOpacity={0.6}
                 />
                 <stop
                   offset="95%"
                   stopColor="var(--color-flights)"
-                  stopOpacity={0.1}
+                  stopOpacity={0.05}
                 />
               </linearGradient>
               <linearGradient id="fillPassengers" x1="0" y1="0" x2="0" y2="1">
                 <stop
-                  offset="5%"
+                  offset="10%"
                   stopColor="var(--color-passengers)"
-                  stopOpacity={0.8}
+                  stopOpacity={0.6}
                 />
                 <stop
                   offset="95%"
                   stopColor="var(--color-passengers)"
-                  stopOpacity={0.1}
+                  stopOpacity={0.05}
                 />
               </linearGradient>
             </defs>
@@ -128,18 +131,20 @@ export function FlightsAreaChart({ data = [], period, onPeriodChange }) {
               content={<ChartTooltipContent indicator="dot" />}
             />
             <Area
-              dataKey="flights"
-              type="natural"
-              fill="url(#fillFlights)"
-              stroke="var(--color-flights)"
-              strokeWidth={2}
-            />
-            <Area
               dataKey="passengers"
               type="natural"
               fill="url(#fillPassengers)"
               stroke="var(--color-passengers)"
               strokeWidth={2}
+              stackId="a"
+            />
+            <Area
+              dataKey="flights"
+              type="natural"
+              fill="url(#fillFlights)"
+              stroke="var(--color-flights)"
+              strokeWidth={2}
+              stackId="a"
             />
             <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>

@@ -425,12 +425,18 @@ export default function ManagementFlights() {
                                 </TableCell>
                                 <TableCell className="text-muted-foreground">
                                   {f.departureTime
-                                    ? format(new Date(f.departureTime), "PPp")
+                                    ? format(
+                                        new Date(f.departureTime),
+                                        "dd MMM yyyy, HH:mm"
+                                      )
                                     : "-"}
                                 </TableCell>
                                 <TableCell className="text-muted-foreground">
                                   {f.arrivalTime
-                                    ? format(new Date(f.arrivalTime), "PPp")
+                                    ? format(
+                                        new Date(f.arrivalTime),
+                                        "dd MMM yyyy, HH:mm"
+                                      )
                                     : "-"}
                                 </TableCell>
                                 <TableCell>

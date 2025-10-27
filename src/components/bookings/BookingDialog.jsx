@@ -301,14 +301,14 @@ export default function BookingDialog({
                     ).toLocaleTimeString("en-IN", {
                       hour: "2-digit",
                       minute: "2-digit",
-                      hour12: true,
+                      hour12: false,
                     });
                     const arrTime = new Date(
                       flight.arrivalTime
                     ).toLocaleTimeString("en-IN", {
                       hour: "2-digit",
                       minute: "2-digit",
-                      hour12: true,
+                      hour12: false,
                     });
 
                     return (
