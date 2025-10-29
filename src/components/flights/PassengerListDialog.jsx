@@ -104,6 +104,8 @@ export default function PassengerListDialog({ open, onOpenChange, flight }) {
                 <TableRow>
                   <TableHead>Seat</TableHead>
                   <TableHead>Name</TableHead>
+                  <TableHead>Gender</TableHead>
+                  <TableHead>Document</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Phone</TableHead>
                   <TableHead>Class</TableHead>
@@ -111,32 +113,66 @@ export default function PassengerListDialog({ open, onOpenChange, flight }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {passengers.map((booking) => (
-                  <TableRow key={booking._id}>
+                {passengers.map((passenger, index) => (
+                  <TableRow key={`${passenger.bookingId}-${index}`}>
                     <TableCell className="font-medium">
-                      {booking.seatNumber}
+                      {passenger.seatNumber}
+                      {passenger.isPrimary && (
+                        <Badge variant="secondary" className="ml-2 text-xs">
+                          Primary
+                        </Badge>
+                      )}
                     </TableCell>
-                    <TableCell>{booking.userId?.name || "—"}</TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {booking.userId?.email || "—"}
+                    <TableCell>
+                      <div className="font-medium">
+                        {passenger.fullName || passenger.userId?.name || "—"}
+                      </div>
+                      {passenger.dateOfBirth && (
+                        <div className="text-xs text-muted-foreground">
+                          DOB:{" "}
+                          {new Date(passenger.dateOfBirth).toLocaleDateString(
+                            "en-IN"
+                          )}
+                        </div>
+                      )}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {booking.userId?.phone || "—"}
+                    <TableCell className="capitalize text-muted-foreground">
+                      {passenger.gender || "—"}
+                    </TableCell>
+                    <TableCell>
+                      {passenger.documentType && passenger.documentNumber ? (
+                        <div className="text-sm">
+                          <div className="font-medium">
+                            {passenger.documentType.toUpperCase()}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {passenger.documentNumber}
+                          </div>
+                        </div>
+                      ) : (
+                        "—"
+                      )}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {passenger.email || "—"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {passenger.phone || "—"}
                     </TableCell>
                     <TableCell>
                       <Badge
                         variant="outline"
                         className={`capitalize ${
-                          booking.travelClass === "first"
+                          passenger.travelClass === "first"
                             ? "border-purple-500 text-purple-700 dark:text-purple-400"
-                            : booking.travelClass === "business"
+                            : passenger.travelClass === "business"
                             ? "border-blue-500 text-blue-700 dark:text-blue-400"
                             : "border-gray-500 text-gray-700 dark:text-gray-400"
                         }`}
                       >
-                        {booking.travelClass === "first"
+                        {passenger.travelClass === "first"
                           ? "⭐ First"
-                          : booking.travelClass === "business"
+                          : passenger.travelClass === "business"
                           ? "✈️ Business"
                           : "🪑 Economy"}
                       </Badge>
@@ -144,15 +180,15 @@ export default function PassengerListDialog({ open, onOpenChange, flight }) {
                     <TableCell>
                       <Badge
                         variant={
-                          booking.status === "confirmed"
+                          passenger.status === "confirmed"
                             ? "default"
-                            : booking.status === "pending"
+                            : passenger.status === "pending"
                             ? "secondary"
                             : "destructive"
                         }
                         className="capitalize"
                       >
-                        {booking.status}
+                        {passenger.status}
                       </Badge>
                     </TableCell>
                   </TableRow>

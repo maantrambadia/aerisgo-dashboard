@@ -344,7 +344,18 @@ export default function Bookings() {
                                   </div>
                                 </TableCell>
                                 <TableCell className="font-medium">
-                                  {booking.seatNumber}
+                                  {booking.passengers &&
+                                  booking.passengers.length > 0
+                                    ? booking.passengers
+                                        .map((p) => p.seatNumber)
+                                        .join(", ")
+                                    : booking.seatNumber}
+                                  {booking.passengers &&
+                                    booking.passengers.length > 1 && (
+                                      <span className="text-xs text-muted-foreground ml-1">
+                                        ({booking.passengers.length} pax)
+                                      </span>
+                                    )}
                                 </TableCell>
                                 <TableCell className="capitalize">
                                   {booking.travelClass}
