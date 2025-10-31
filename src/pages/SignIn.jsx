@@ -161,6 +161,15 @@ export default function SignIn() {
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
           draggable={false}
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-background/20" />
+        <div className="absolute bottom-0 left-0 right-0 p-10">
+          <h2 className="text-3xl font-bold text-white mb-2">
+            Manage your flight operations
+          </h2>
+          <p className="text-white/90 text-lg">
+            Access powerful tools to oversee bookings, flights, and analytics
+          </p>
+        </div>
       </div>
     </div>
   );

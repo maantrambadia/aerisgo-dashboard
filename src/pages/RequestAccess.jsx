@@ -334,6 +334,15 @@ export default function RequestAccess() {
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
           draggable={false}
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-background/20" />
+        <div className="absolute bottom-0 left-0 right-0 p-10">
+          <h2 className="text-3xl font-bold text-white mb-2">
+            Join the AerisGo team
+          </h2>
+          <p className="text-white/90 text-lg">
+            Request access to help manage and grow our flight operations
+          </p>
+        </div>
       </div>
     </div>
   );
