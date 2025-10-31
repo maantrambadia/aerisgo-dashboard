@@ -175,11 +175,7 @@ export default function FlightSeatMap() {
 
   useDocumentTitle("Flight Seat Map");
 
-  useEffect(() => {
-    fetchData();
-  }, [id]);
-
-  async function fetchData() {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -212,7 +208,11 @@ export default function FlightSeatMap() {
       toast.error(error.response?.data?.message || "Failed to load seat map");
       setTimeout(() => navigate("/flights"), 1500);
     }
-  }
+  }, [id, navigate]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   // Activity log helper
   const addActivityLog = useCallback((message) => {
@@ -305,12 +305,6 @@ export default function FlightSeatMap() {
   const rowNumbers = Object.keys(seatsByRow)
     .map(Number)
     .sort((a, b) => a - b);
-
-  const getRowClass = (rowNum) => {
-    if (rowNum <= 2) return "first";
-    if (rowNum <= 7) return "business";
-    return "economy";
-  };
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -442,7 +436,6 @@ export default function FlightSeatMap() {
                   {/* Seat Rows */}
                   {rowNumbers.map((rowNum) => {
                     const row = seatsByRow[rowNum];
-                    const rowClass = getRowClass(rowNum);
 
                     return (
                       <div key={rowNum} className="flex flex-col items-center">
