@@ -14,6 +14,7 @@ const PendingApproval = lazy(() => import("@/pages/PendingApproval.jsx"));
 const NotFound = lazy(() => import("@/pages/NotFound.jsx"));
 
 const Flights = lazy(() => import("@/pages/Flights.jsx"));
+const FlightSeatMap = lazy(() => import("@/pages/FlightSeatMap.jsx"));
 const Home = lazy(() => import("@/pages/Home.jsx"));
 const Users = lazy(() => import("@/pages/Users.jsx"));
 const Bookings = lazy(() => import("@/pages/Bookings.jsx"));
@@ -65,6 +66,16 @@ const router = createBrowserRouter([
           <Flights />
         </Suspense>
       </RequireAdmin>
+    ),
+  },
+  {
+    path: "/flights/:id/seat-map",
+    element: (
+      <RequireAdminOrStaff>
+        <Suspense fallback={<AuthLoadingFallback />}>
+          <FlightSeatMap />
+        </Suspense>
+      </RequireAdminOrStaff>
     ),
   },
   {

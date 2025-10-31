@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -69,6 +70,7 @@ import {
   MoreVertical,
   Armchair,
   Users,
+  Activity,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext.jsx";
 import { FLIGHT_NUMBERS } from "@/utils/flightData";
@@ -81,6 +83,7 @@ export default function ManagementFlights() {
 
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
+  const navigate = useNavigate();
 
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -478,6 +481,16 @@ export default function ManagementFlights() {
                                           Actions
                                         </DropdownMenuLabel>
                                         <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                          onClick={() =>
+                                            navigate(
+                                              `/flights/${f._id}/seat-map`
+                                            )
+                                          }
+                                        >
+                                          <Activity className="mr-2 h-4 w-4" />
+                                          Real-time Seat Map
+                                        </DropdownMenuItem>
                                         <DropdownMenuItem
                                           onClick={() => openSeatMap(f)}
                                         >

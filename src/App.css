@@ -261,6 +261,29 @@
   * {
     -ms-overflow-style: none;
   }
+
+  /* Custom scrollbar for seat map - override hidden scrollbar */
+  .seat-map-scroll::-webkit-scrollbar {
+    height: 10px !important;
+    width: auto !important;
+  }
+  .seat-map-scroll::-webkit-scrollbar-track {
+    background: rgba(227, 215, 203, 0.3) !important;
+    border-radius: 5px;
+  }
+  .seat-map-scroll::-webkit-scrollbar-thumb {
+    background: rgba(84, 20, 36, 0.5) !important;
+    border-radius: 5px;
+  }
+  .seat-map-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(84, 20, 36, 0.7) !important;
+  }
+
+  /* For Firefox */
+  .seat-map-scroll {
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(84, 20, 36, 0.5) rgba(227, 215, 203, 0.3) !important;
+  }
 }
 
 .dark {
