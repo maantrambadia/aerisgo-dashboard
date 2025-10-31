@@ -274,6 +274,23 @@ export default function FlightSeatMap() {
         });
         addActivityLog(`Seat ${data.seatNumber} lock expired`);
       },
+      onSeatCancelled: (data) => {
+        if (data.flightId !== id) return;
+        // Booking cancelled, seat becomes available
+        setSeats((prevSeats) =>
+          prevSeats.map((s) =>
+            s.seatNumber === data.seatNumber ? { ...s, isAvailable: true } : s
+          )
+        );
+        setLockedSeats((prev) => {
+          const newLocks = new Map(prev);
+          newLocks.delete(data.seatNumber);
+          return newLocks;
+        });
+        addActivityLog(
+          `Seat ${data.seatNumber} booking cancelled - now available`
+        );
+      },
       onError: (error) => {
         console.error("Socket error:", error);
       },
