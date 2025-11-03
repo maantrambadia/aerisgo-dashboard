@@ -73,13 +73,13 @@ import {
   Activity,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext.jsx";
-import { FLIGHT_NUMBERS } from "@/utils/flightData";
 import { getAllAirports } from "@/lib/airports";
 import ModernSeatMapDialog from "@/components/flights/ModernSeatMapDialog";
 import PassengerListDialog from "@/components/flights/PassengerListDialog";
+import FlightOperationsDialog from "@/components/flights/FlightOperationsDialog";
 
 export default function ManagementFlights() {
-  useDocumentTitle("Flights");
+  useDocumentTitle("Flights Management");
 
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
@@ -113,6 +113,10 @@ export default function ManagementFlights() {
   const [airports, setAirports] = useState([]);
   const [airportsLoading, setAirportsLoading] = useState(false);
 
+  // Aircraft state
+  const [aircraft, setAircraft] = useState([]);
+  const [aircraftLoading, setAircraftLoading] = useState(false);
+
   // Delete dialog state
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -120,6 +124,7 @@ export default function ManagementFlights() {
   // Seat Map & Passenger List state
   const [seatMapDialogOpen, setSeatMapDialogOpen] = useState(false);
   const [passengerDialogOpen, setPassengerDialogOpen] = useState(false);
+  const [opsDialogOpen, setOpsDialogOpen] = useState(false);
   const [selectedFlight, setSelectedFlight] = useState(null);
 
   // Controlled status for the Sheet form using shadcn Select
@@ -130,7 +135,7 @@ export default function ManagementFlights() {
     [q, source, destination, status, dateFrom, dateTo]
   );
 
-  // Load airports on mount
+  // Load airports and aircraft on mount
   useEffect(() => {
     const loadAirports = async () => {
       try {
@@ -144,7 +149,22 @@ export default function ManagementFlights() {
         setAirportsLoading(false);
       }
     };
+
+    const loadAircraft = async () => {
+      try {
+        setAircraftLoading(true);
+        const { data } = await api.get("/aircraft?limit=100&status=active");
+        setAircraft(data.aircraft || []);
+      } catch (error) {
+        console.error("Failed to load aircraft:", error);
+        toast.error("Failed to load aircraft data");
+      } finally {
+        setAircraftLoading(false);
+      }
+    };
+
     loadAirports();
+    loadAircraft();
   }, []);
 
   async function fetchFlights(opts = {}) {
@@ -209,6 +229,11 @@ export default function ManagementFlights() {
   function openPassengerList(flight) {
     setSelectedFlight(flight);
     setPassengerDialogOpen(true);
+  }
+
+  function openFlightOps(flight) {
+    setSelectedFlight(flight);
+    setOpsDialogOpen(true);
   }
 
   async function confirmDelete() {
@@ -299,7 +324,7 @@ export default function ManagementFlights() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 font-bold text-2xl">
                       <Plane className="h-5 w-5" />
                       Flights Management
                     </CardTitle>
@@ -321,7 +346,8 @@ export default function ManagementFlights() {
                     {isAdmin && (
                       <Button size="sm" onClick={openCreate}>
                         <Plus className="mr-2 h-4 w-4" />
-                        Add Flight
+                        <span className="hidden sm:inline">Add Flight</span>
+                        <span className="sm:hidden">Add</span>
                       </Button>
                     )}
                   </div>
@@ -329,7 +355,7 @@ export default function ManagementFlights() {
               </CardHeader>
               <CardContent>
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="grid w-full grid-cols-5 mb-6">
+                  <TabsList className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground w-full overflow-x-auto mb-6">
                     <TabsTrigger value="all" className="relative">
                       All
                       <Badge
@@ -400,18 +426,30 @@ export default function ManagementFlights() {
                         </p>
                       </div>
                     ) : (
-                      <div className="rounded-md border">
+                      <div className="rounded-md border overflow-x-auto">
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Flight #</TableHead>
-                              <TableHead>Route</TableHead>
-                              <TableHead>Departure</TableHead>
-                              <TableHead>Arrival</TableHead>
-                              <TableHead>Fare</TableHead>
-                              <TableHead>Status</TableHead>
+                              <TableHead className="min-w-[100px]">
+                                Flight #
+                              </TableHead>
+                              <TableHead className="min-w-[180px]">
+                                Route
+                              </TableHead>
+                              <TableHead className="min-w-[160px]">
+                                Departure
+                              </TableHead>
+                              <TableHead className="min-w-[160px]">
+                                Arrival
+                              </TableHead>
+                              <TableHead className="min-w-[100px]">
+                                Fare
+                              </TableHead>
+                              <TableHead className="min-w-[100px]">
+                                Status
+                              </TableHead>
                               {isAdmin && (
-                                <TableHead className="text-right">
+                                <TableHead className="text-right min-w-[100px]">
                                   Actions
                                 </TableHead>
                               )}
@@ -503,6 +541,12 @@ export default function ManagementFlights() {
                                           <Users className="mr-2 h-4 w-4" />
                                           Passenger List
                                         </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                          onClick={() => openFlightOps(f)}
+                                        >
+                                          <Activity className="mr-2 h-4 w-4" />
+                                          Flight Operations
+                                        </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                           onClick={() => openEdit(f)}
@@ -580,29 +624,45 @@ export default function ManagementFlights() {
             <form onSubmit={onSubmit}>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="flightNumber">Flight Number</Label>
+                  <Label htmlFor="flightNumber">
+                    Aircraft Registration Number
+                  </Label>
                   <Select
                     value={flightNumberValue}
                     onValueChange={setFlightNumberValue}
-                    disabled={!!editing}
+                    disabled={!!editing || aircraftLoading}
                   >
                     <SelectTrigger id="flightNumber" className="w-full">
-                      <SelectValue placeholder="Select flight number" />
+                      <SelectValue placeholder="Select aircraft" />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px]">
-                      {FLIGHT_NUMBERS.map((num) => (
-                        <SelectItem key={num} value={num}>
-                          {num}
+                      {aircraftLoading ? (
+                        <SelectItem value="loading" disabled>
+                          Loading aircraft...
                         </SelectItem>
-                      ))}
+                      ) : aircraft.length === 0 ? (
+                        <SelectItem value="none" disabled>
+                          No active aircraft available
+                        </SelectItem>
+                      ) : (
+                        aircraft.map((ac) => (
+                          <SelectItem key={ac._id} value={ac.flightNumber}>
+                            {ac.flightNumber} ({ac.registrationNumber}) -{" "}
+                            {ac.aircraftType}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
-                  {!!editing && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Flight number cannot be changed
-                    </p>
-                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Select aircraft by flight number
+                  </p>
                 </div>
+                {!!editing && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Flight number cannot be changed
+                  </p>
+                )}
                 <div className="grid gap-2">
                   <Label htmlFor="source">Source</Label>
                   <Select
@@ -848,6 +908,14 @@ export default function ManagementFlights() {
           open={passengerDialogOpen}
           onOpenChange={setPassengerDialogOpen}
           flight={selectedFlight}
+        />
+
+        {/* Flight Operations Dialog */}
+        <FlightOperationsDialog
+          open={opsDialogOpen}
+          onOpenChange={setOpsDialogOpen}
+          flight={selectedFlight}
+          onUpdate={fetchFlights}
         />
       </SidebarInset>
     </SidebarProvider>

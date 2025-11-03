@@ -85,7 +85,10 @@ export default function RequestAccess() {
       };
 
       await requestAccess(payload);
-      navigate("/pending-approval", { replace: true });
+      toast.success(
+        "Access request submitted. An admin will review your request."
+      );
+      navigate("/sign-in", { replace: true });
     } finally {
       setLoading(false);
     }

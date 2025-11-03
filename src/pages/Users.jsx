@@ -56,7 +56,7 @@ import {
 import RewardsManagementDialog from "@/components/users/RewardsManagementDialog";
 
 export default function Users() {
-  useDocumentTitle("Users");
+  useDocumentTitle("Users Management");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [approving, setApproving] = useState({});
@@ -245,7 +245,7 @@ export default function Users() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 font-bold text-2xl">
                       <UsersIcon className="h-5 w-5" />
                       Users Management
                     </CardTitle>
@@ -267,7 +267,7 @@ export default function Users() {
               </CardHeader>
               <CardContent>
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="grid w-full grid-cols-4 mb-6">
+                  <TabsList className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground w-full overflow-x-auto mb-6">
                     <TabsTrigger value="all" className="relative">
                       All
                       <Badge
@@ -328,17 +328,29 @@ export default function Users() {
                         </p>
                       </div>
                     ) : (
-                      <div className="rounded-md border">
+                      <div className="rounded-md border overflow-x-auto">
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Name</TableHead>
-                              <TableHead>Email</TableHead>
-                              <TableHead>Phone</TableHead>
-                              <TableHead>Gender</TableHead>
-                              <TableHead>Role</TableHead>
-                              <TableHead>Status</TableHead>
-                              <TableHead className="text-right">
+                              <TableHead className="min-w-[150px]">
+                                Name
+                              </TableHead>
+                              <TableHead className="min-w-[200px]">
+                                Email
+                              </TableHead>
+                              <TableHead className="min-w-[140px]">
+                                Phone
+                              </TableHead>
+                              <TableHead className="min-w-[100px]">
+                                Gender
+                              </TableHead>
+                              <TableHead className="min-w-[100px]">
+                                Role
+                              </TableHead>
+                              <TableHead className="min-w-[120px]">
+                                Status
+                              </TableHead>
+                              <TableHead className="text-right min-w-[150px]">
                                 Actions
                               </TableHead>
                             </TableRow>

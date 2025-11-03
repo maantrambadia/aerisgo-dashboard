@@ -18,6 +18,8 @@ const FlightSeatMap = lazy(() => import("@/pages/FlightSeatMap.jsx"));
 const Home = lazy(() => import("@/pages/Home.jsx"));
 const Users = lazy(() => import("@/pages/Users.jsx"));
 const Bookings = lazy(() => import("@/pages/Bookings.jsx"));
+const Aircraft = lazy(() => import("@/pages/Aircraft.jsx"));
+const Crew = lazy(() => import("@/pages/Crew.jsx"));
 
 const router = createBrowserRouter([
   {
@@ -96,6 +98,26 @@ const router = createBrowserRouter([
           <Bookings />
         </Suspense>
       </RequireAdminOrStaff>
+    ),
+  },
+  {
+    path: "/aircraft",
+    element: (
+      <RequireAdmin>
+        <Suspense fallback={<LoadingFallback />}>
+          <Aircraft />
+        </Suspense>
+      </RequireAdmin>
+    ),
+  },
+  {
+    path: "/crew",
+    element: (
+      <RequireAdmin>
+        <Suspense fallback={<LoadingFallback />}>
+          <Crew />
+        </Suspense>
+      </RequireAdmin>
     ),
   },
   {

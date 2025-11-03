@@ -57,7 +57,7 @@ export function AuthProvider({ children }) {
           password,
           gender,
         });
-        toast.success(data.message || "Request submitted");
+        // Toast is shown in RequestAccess.jsx component
         return data.user;
       } catch (err) {
         const msg = err?.response?.data?.message || "Request failed";

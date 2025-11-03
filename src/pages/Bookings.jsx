@@ -53,9 +53,10 @@ import {
   Search,
 } from "lucide-react";
 import BookingDialog from "@/components/bookings/BookingDialog";
+import BookingDetailsDialog from "@/components/bookings/BookingDetailsDialog";
 
 export default function Bookings() {
-  useDocumentTitle("Bookings");
+  useDocumentTitle("Bookings Management");
 
   // Format date to IST
   function formatBookingDate(dateString) {
@@ -87,6 +88,9 @@ export default function Bookings() {
 
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
   const [editingBooking, setEditingBooking] = useState(null);
+
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancelTarget, setCancelTarget] = useState(null);
@@ -134,6 +138,11 @@ export default function Bookings() {
   function openEdit(booking) {
     setEditingBooking(booking);
     setBookingDialogOpen(true);
+  }
+
+  function openDetails(booking) {
+    setSelectedBooking(booking);
+    setDetailsDialogOpen(true);
   }
 
   function requestCancel(booking) {
@@ -184,7 +193,7 @@ export default function Bookings() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 font-bold text-2xl">
                       <Ticket className="h-5 w-5" />
                       Bookings Management
                     </CardTitle>
@@ -206,7 +215,8 @@ export default function Bookings() {
                     </Button>
                     <Button size="sm" onClick={openCreate}>
                       <Plus className="mr-2 h-4 w-4" />
-                      Add Booking
+                      <span className="hidden sm:inline">Add Booking</span>
+                      <span className="sm:hidden">Add</span>
                     </Button>
                   </div>
                 </div>
@@ -241,7 +251,7 @@ export default function Bookings() {
                 </div>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="grid w-full grid-cols-4 mb-6">
+                  <TabsList className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground w-full overflow-x-auto mb-6">
                     <TabsTrigger value="all" className="relative">
                       All
                       <Badge
@@ -303,19 +313,38 @@ export default function Bookings() {
                         </p>
                       </div>
                     ) : (
-                      <div className="rounded-md border">
+                      <div className="rounded-md border overflow-x-auto">
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Booking ID</TableHead>
-                              <TableHead>Passenger</TableHead>
-                              <TableHead>Flight</TableHead>
-                              <TableHead>Seat</TableHead>
-                              <TableHead>Class</TableHead>
-                              <TableHead>Price</TableHead>
-                              <TableHead>Booked On</TableHead>
-                              <TableHead>Status</TableHead>
-                              <TableHead className="text-right">
+                              <TableHead className="min-w-[120px]">
+                                PNR
+                              </TableHead>
+                              <TableHead className="min-w-[150px]">
+                                Passenger
+                              </TableHead>
+                              <TableHead className="min-w-[100px]">
+                                Flight
+                              </TableHead>
+                              <TableHead className="min-w-[80px]">
+                                Seat
+                              </TableHead>
+                              <TableHead className="min-w-[100px]">
+                                Class
+                              </TableHead>
+                              <TableHead className="min-w-[80px]">
+                                Type
+                              </TableHead>
+                              <TableHead className="min-w-[100px]">
+                                Price
+                              </TableHead>
+                              <TableHead className="min-w-[140px]">
+                                Booked On
+                              </TableHead>
+                              <TableHead className="min-w-[100px]">
+                                Status
+                              </TableHead>
+                              <TableHead className="text-right min-w-[100px]">
                                 Actions
                               </TableHead>
                             </TableRow>
@@ -323,8 +352,8 @@ export default function Bookings() {
                           <TableBody>
                             {filteredItems.map((booking) => (
                               <TableRow key={booking._id}>
-                                <TableCell className="font-mono text-xs">
-                                  {booking._id.slice(-8)}
+                                <TableCell className="font-mono font-semibold">
+                                  {booking.pnr}
                                 </TableCell>
                                 <TableCell>
                                   <div className="font-medium">
@@ -342,6 +371,14 @@ export default function Bookings() {
                                     {booking.flightId?.source} →{" "}
                                     {booking.flightId?.destination}
                                   </div>
+                                  {booking.bookingType === "round-trip" &&
+                                    booking.returnFlightId && (
+                                      <div className="text-xs text-muted-foreground mt-1">
+                                        Return:{" "}
+                                        {booking.returnFlightId?.flightNumber ||
+                                          "—"}
+                                      </div>
+                                    )}
                                 </TableCell>
                                 <TableCell className="font-medium">
                                   {booking.passengers &&
@@ -359,6 +396,23 @@ export default function Bookings() {
                                 </TableCell>
                                 <TableCell className="capitalize">
                                   {booking.travelClass}
+                                </TableCell>
+                                <TableCell>
+                                  {booking.bookingType === "round-trip" ? (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
+                                      ⇄ Round Trip
+                                    </Badge>
+                                  ) : (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
+                                      One-way
+                                    </Badge>
+                                  )}
                                 </TableCell>
                                 <TableCell>
                                   ₹
@@ -401,6 +455,12 @@ export default function Bookings() {
                                         Actions
                                       </DropdownMenuLabel>
                                       <DropdownMenuSeparator />
+                                      <DropdownMenuItem
+                                        onClick={() => openDetails(booking)}
+                                      >
+                                        <Search className="mr-2 h-4 w-4" />
+                                        View Details
+                                      </DropdownMenuItem>
                                       <DropdownMenuItem
                                         onClick={() => openEdit(booking)}
                                         disabled={
@@ -471,6 +531,14 @@ export default function Bookings() {
           onOpenChange={setBookingDialogOpen}
           booking={editingBooking}
           onSuccess={fetchBookings}
+        />
+
+        {/* Booking Details Dialog */}
+        <BookingDetailsDialog
+          open={detailsDialogOpen}
+          onOpenChange={setDetailsDialogOpen}
+          booking={selectedBooking}
+          onUpdate={fetchBookings}
         />
 
         {/* Cancel Confirmation Dialog */}

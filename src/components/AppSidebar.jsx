@@ -5,6 +5,8 @@ import {
   Plane,
   Users as UsersIcon,
   Ticket,
+  PlaneTakeoff,
+  UserCog,
 } from "lucide-react";
 import { NavMain } from "@/components/NavMain";
 import { NavUser } from "@/components/NavUser";
@@ -30,6 +32,8 @@ export function AppSidebar({ ...props }) {
         { title: "Dashboard", url: "/", icon: LayoutDashboard },
         { title: "Flights", url: "/flights", icon: Plane },
         { title: "Bookings", url: "/bookings", icon: Ticket },
+        { title: "Aircraft", url: "/aircraft", icon: PlaneTakeoff },
+        { title: "Crew", url: "/crew", icon: UserCog },
         { title: "Users", url: "/users", icon: UsersIcon },
       ];
     }
