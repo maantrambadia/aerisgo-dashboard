@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -90,7 +90,7 @@ export function FlightsAreaChart({ data = [], period, onPeriodChange }) {
         >
           <AreaChart
             data={chartData}
-            margin={{ top: 30, right: 12, left: 12, bottom: 0 }}
+            margin={{ top: 30, right: 30, left: 12, bottom: 0 }}
           >
             <defs>
               <linearGradient id="fillFlights" x1="0" y1="0" x2="0" y2="1">
@@ -126,6 +126,20 @@ export function FlightsAreaChart({ data = [], period, onPeriodChange }) {
               tickMargin={8}
               minTickGap={32}
             />
+            <YAxis
+              yAxisId="left"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickFormatter={(value) => value.toLocaleString()}
+            />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+            />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="dot" />}
@@ -136,7 +150,7 @@ export function FlightsAreaChart({ data = [], period, onPeriodChange }) {
               fill="url(#fillPassengers)"
               stroke="var(--color-passengers)"
               strokeWidth={2}
-              stackId="a"
+              yAxisId="left"
             />
             <Area
               dataKey="flights"
@@ -144,7 +158,7 @@ export function FlightsAreaChart({ data = [], period, onPeriodChange }) {
               fill="url(#fillFlights)"
               stroke="var(--color-flights)"
               strokeWidth={2}
-              stackId="a"
+              yAxisId="right"
             />
             <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>
