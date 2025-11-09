@@ -476,28 +476,38 @@ export default function Users() {
 
       {/* Edit User Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="max-w-[95vw] sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <form onSubmit={handleUpdateUser}>
             <DialogHeader>
-              <DialogTitle>Edit User</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-lg sm:text-xl">
+                Edit User
+              </DialogTitle>
+              <DialogDescription className="text-sm">
                 Update user information and permissions
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
+            <div className="grid gap-3 sm:gap-4 py-3 sm:py-4">
+              {/* Name Field */}
               <div className="grid gap-2">
-                <Label htmlFor="edit-name">Full Name</Label>
+                <Label htmlFor="edit-name" className="text-sm">
+                  Full Name
+                </Label>
                 <Input
                   id="edit-name"
                   value={editForm.name}
                   onChange={(e) =>
                     setEditForm({ ...editForm, name: e.target.value })
                   }
+                  className="h-10 text-sm"
                   required
                 />
               </div>
+
+              {/* Email Field */}
               <div className="grid gap-2">
-                <Label htmlFor="edit-email">Email</Label>
+                <Label htmlFor="edit-email" className="text-sm">
+                  Email
+                </Label>
                 <Input
                   id="edit-email"
                   type="email"
@@ -505,18 +515,23 @@ export default function Users() {
                   onChange={(e) =>
                     setEditForm({ ...editForm, email: e.target.value })
                   }
+                  className="h-10 text-sm"
                   required
                 />
               </div>
+
+              {/* Phone Field */}
               <div className="grid gap-2">
-                <Label htmlFor="edit-phone">Phone</Label>
+                <Label htmlFor="edit-phone" className="text-sm">
+                  Phone
+                </Label>
                 <div className="flex">
-                  <span className="inline-flex items-center rounded-l-md border border-r-0 bg-input/50 px-3 text-sm text-foreground/80">
+                  <span className="inline-flex items-center rounded-l-md border border-r-0 bg-input/50 px-2 sm:px-3 text-xs sm:text-sm text-foreground/80">
                     +91
                   </span>
                   <Input
                     id="edit-phone"
-                    className="rounded-l-none"
+                    className="rounded-l-none h-10 text-sm"
                     value={editForm.phone.replace("+91", "")}
                     onChange={(e) => {
                       const digits = e.target.value
@@ -529,66 +544,94 @@ export default function Users() {
                   />
                 </div>
               </div>
+
+              {/* Gender Field */}
               <div className="grid gap-2">
-                <Label>Gender</Label>
+                <Label className="text-sm">Gender</Label>
                 <RadioGroup
                   value={editForm.gender}
                   onValueChange={(value) =>
                     setEditForm({ ...editForm, gender: value })
                   }
+                  className="grid grid-cols-3 gap-2 sm:flex sm:flex-col sm:gap-0 sm:space-y-2"
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="male" id="edit-male" />
-                    <Label htmlFor="edit-male" className="font-normal">
+                    <Label
+                      htmlFor="edit-male"
+                      className="font-normal text-sm cursor-pointer"
+                    >
                       Male
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="female" id="edit-female" />
-                    <Label htmlFor="edit-female" className="font-normal">
+                    <Label
+                      htmlFor="edit-female"
+                      className="font-normal text-sm cursor-pointer"
+                    >
                       Female
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="other" id="edit-other" />
-                    <Label htmlFor="edit-other" className="font-normal">
+                    <Label
+                      htmlFor="edit-other"
+                      className="font-normal text-sm cursor-pointer"
+                    >
                       Other
                     </Label>
                   </div>
                 </RadioGroup>
               </div>
+
+              {/* Role Field */}
               <div className="grid gap-2">
-                <Label>Role</Label>
+                <Label className="text-sm">Role</Label>
                 <RadioGroup
                   value={editForm.role}
                   onValueChange={(value) =>
                     setEditForm({ ...editForm, role: value })
                   }
+                  className="grid grid-cols-3 gap-2 sm:flex sm:flex-col sm:gap-0 sm:space-y-2"
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="passenger" id="edit-passenger" />
-                    <Label htmlFor="edit-passenger" className="font-normal">
+                    <Label
+                      htmlFor="edit-passenger"
+                      className="font-normal text-sm cursor-pointer"
+                    >
                       Passenger
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="staff" id="edit-staff" />
-                    <Label htmlFor="edit-staff" className="font-normal">
+                    <Label
+                      htmlFor="edit-staff"
+                      className="font-normal text-sm cursor-pointer"
+                    >
                       Staff
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="admin" id="edit-admin" />
-                    <Label htmlFor="edit-admin" className="font-normal">
+                    <Label
+                      htmlFor="edit-admin"
+                      className="font-normal text-sm cursor-pointer"
+                    >
                       Admin
                     </Label>
                   </div>
                 </RadioGroup>
               </div>
-              <div className="flex items-center justify-between rounded-lg border p-3">
+
+              {/* Verified Status */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 rounded-lg border p-3">
                 <div className="space-y-0.5">
-                  <Label htmlFor="edit-verified">Verified Status</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <Label htmlFor="edit-verified" className="text-sm">
+                    Verified Status
+                  </Label>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Allow user to access the system
                   </p>
                 </div>
@@ -600,10 +643,14 @@ export default function Users() {
                   }
                 />
               </div>
+
+              {/* Password Field */}
               <div className="grid gap-2">
-                <Label htmlFor="edit-password">
+                <Label htmlFor="edit-password" className="text-sm">
                   New Password{" "}
-                  <span className="text-muted-foreground">(optional)</span>
+                  <span className="text-muted-foreground text-xs">
+                    (optional)
+                  </span>
                 </Label>
                 <Input
                   id="edit-password"
@@ -613,19 +660,25 @@ export default function Users() {
                   onChange={(e) =>
                     setEditForm({ ...editForm, password: e.target.value })
                   }
+                  className="h-10 text-sm"
                 />
               </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={closeEditDialog}
                 disabled={updating}
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={updating}>
+              <Button
+                type="submit"
+                disabled={updating}
+                className="w-full sm:w-auto"
+              >
                 {updating ? "Updating..." : "Save Changes"}
               </Button>
             </DialogFooter>
