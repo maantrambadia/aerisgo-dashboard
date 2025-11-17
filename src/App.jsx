@@ -15,6 +15,7 @@ const NotFound = lazy(() => import("@/pages/NotFound.jsx"));
 
 const Flights = lazy(() => import("@/pages/Flights.jsx"));
 const FlightSeatMap = lazy(() => import("@/pages/FlightSeatMap.jsx"));
+const FlightOperations = lazy(() => import("@/pages/FlightOperations.jsx"));
 const Home = lazy(() => import("@/pages/Home.jsx"));
 const Users = lazy(() => import("@/pages/Users.jsx"));
 const Bookings = lazy(() => import("@/pages/Bookings.jsx"));
@@ -76,6 +77,16 @@ const router = createBrowserRouter([
       <RequireAdminOrStaff>
         <Suspense fallback={<AuthLoadingFallback />}>
           <FlightSeatMap />
+        </Suspense>
+      </RequireAdminOrStaff>
+    ),
+  },
+  {
+    path: "/flight-operations",
+    element: (
+      <RequireAdminOrStaff>
+        <Suspense fallback={<LoadingFallback />}>
+          <FlightOperations />
         </Suspense>
       </RequireAdminOrStaff>
     ),

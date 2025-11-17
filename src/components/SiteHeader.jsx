@@ -11,6 +11,7 @@ export function SiteHeader() {
 
     if (path === "/") return "Dashboard";
     if (path.startsWith("/flights")) return "Flights";
+    if (path.startsWith("/flight-operations")) return "Flight Operations";
     if (path.startsWith("/users")) return "Users";
     if (path.startsWith("/bookings")) return "Bookings";
     if (path.startsWith("/aircraft")) return "Aircraft";

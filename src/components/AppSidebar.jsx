@@ -7,6 +7,7 @@ import {
   Ticket,
   PlaneTakeoff,
   UserCog,
+  Activity,
 } from "lucide-react";
 import { NavMain } from "@/components/NavMain";
 import { NavUser } from "@/components/NavUser";
@@ -40,6 +41,11 @@ export function AppSidebar({ ...props }) {
     if (roleLower === "staff") {
       return [
         { title: "Dashboard", url: "/", icon: LayoutDashboard },
+        {
+          title: "Flight Operations",
+          url: "/flight-operations",
+          icon: Activity,
+        },
         { title: "Bookings", url: "/bookings", icon: Ticket },
       ];
     }
