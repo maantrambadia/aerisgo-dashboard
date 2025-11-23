@@ -465,15 +465,42 @@ export default function Dashboard() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Award className="h-5 w-5" />
-                        Rewards Usage & Redemption
+                        Rewards Program
                       </CardTitle>
                       <CardDescription>
-                        Redemption Rate: {rewards.summary?.redemptionRate || 0}%
-                        • Total Points:{" "}
-                        {rewards.summary?.totalPointsRedeemed || 0}
+                        Points earned, redeemed, and current balance
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
+                      <div className="grid gap-4 md:grid-cols-3 mb-6">
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">
+                            Total Earned
+                          </p>
+                          <p className="text-2xl font-bold text-green-600">
+                            {rewards.summary?.totalPointsEarned?.toLocaleString() ||
+                              0}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">
+                            Total Redeemed
+                          </p>
+                          <p className="text-2xl font-bold text-orange-600">
+                            {rewards.summary?.totalPointsRedeemed?.toLocaleString() ||
+                              0}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">
+                            Current Balance
+                          </p>
+                          <p className="text-2xl font-bold text-blue-600">
+                            {rewards.summary?.currentBalance?.toLocaleString() ||
+                              0}
+                          </p>
+                        </div>
+                      </div>
                       <ResponsiveContainer width="100%" height={250}>
                         <BarChart data={formatRewardsData()}>
                           <CartesianGrid strokeDasharray="3 3" />
