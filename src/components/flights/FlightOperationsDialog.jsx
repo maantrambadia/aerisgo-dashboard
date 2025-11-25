@@ -273,9 +273,10 @@ export default function FlightOperationsDialog({
                 {opsData?.aircraft ? (
                   <div className="mt-2 p-3 border rounded-lg bg-muted/50">
                     <div className="font-mono font-semibold">
-                      {opsData.aircraft.registrationNumber}
+                      {opsData.aircraft.flightNumber}
                     </div>
                     <div className="text-sm text-muted-foreground">
+                      {opsData.aircraft.registrationNumber} •{" "}
                       {opsData.aircraft.aircraftType} •{" "}
                       {opsData.aircraft.totalSeats} seats
                     </div>
@@ -301,7 +302,8 @@ export default function FlightOperationsDialog({
                   <SelectContent>
                     {aircraftList.map((aircraft) => (
                       <SelectItem key={aircraft._id} value={aircraft._id}>
-                        {aircraft.registrationNumber} - {aircraft.aircraftType}
+                        {aircraft.flightNumber} ({aircraft.registrationNumber})
+                        - {aircraft.aircraftType}
                       </SelectItem>
                     ))}
                   </SelectContent>

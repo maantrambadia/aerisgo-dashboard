@@ -458,8 +458,14 @@ export default function ManagementFlights() {
                           <TableBody>
                             {filteredItems.map((f) => (
                               <TableRow key={f._id}>
-                                <TableCell className="font-medium">
-                                  {f.flightNumber}
+                                <TableCell>
+                                  <div className="font-mono font-semibold">
+                                    {f.flightNumber}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {f.aircraftId?.registrationNumber ||
+                                      "No aircraft assigned"}
+                                  </div>
                                 </TableCell>
                                 <TableCell>
                                   {f.source} → {f.destination}

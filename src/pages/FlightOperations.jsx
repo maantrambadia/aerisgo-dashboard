@@ -301,7 +301,8 @@ export default function FlightOperations() {
                                 {flight.flightNumber}
                               </div>
                               <div className="text-xs text-muted-foreground">
-                                {flight.aircraftType}
+                                {flight.aircraftId?.registrationNumber ||
+                                  "No aircraft assigned"}
                               </div>
                             </TableCell>
                             <TableCell>
