@@ -113,11 +113,24 @@ const AdminSeatButton = ({ seat, onUnlock, lockedInfo }) => {
     }
 
     if (!seat.isAvailable) {
+      // Find passenger details from booking
+      const passenger = seat.booking?.passengers?.find(
+        (p) => p.seatNumber === seat.seatNumber
+      );
+      const passengerName =
+        passenger?.fullName || seat.booking?.userId?.name || "Passenger";
+      const passengerEmail =
+        passenger?.email || seat.booking?.userId?.email || "N/A";
+      const pnr = seat.booking?.pnr || "N/A";
+
       return (
-        <div className="space-y-1">
+        <div className="space-y-2">
           <div className="font-semibold">Seat {seat.seatNumber} - Booked</div>
-          <div className="text-xs">
-            {seat.booking?.passengerName || "Passenger"}
+          <div className="text-xs space-y-1">
+            <div>Passenger: {passengerName}</div>
+            <div>Email: {passengerEmail}</div>
+            <div>PNR: {pnr}</div>
+            <div>Class: {seat.travelClass}</div>
           </div>
         </div>
       );
