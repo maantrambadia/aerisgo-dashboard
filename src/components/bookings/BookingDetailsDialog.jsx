@@ -208,13 +208,46 @@ export default function BookingDetailsDialog({
               <div className="space-y-4">
                 <div>
                   <h3 className="font-semibold mb-2">Meal Preferences</h3>
-                  {mealData?.mealPreference ? (
+                  {booking?.passengers && booking.passengers.length > 0 ? (
+                    <div className="space-y-3">
+                      {booking.passengers.map((passenger, idx) => (
+                        <div
+                          key={idx}
+                          className="p-4 border rounded-lg bg-muted/50"
+                        >
+                          <div className="flex items-start gap-3">
+                            <Utensils className="h-5 w-5 text-primary mt-0.5" />
+                            <div className="flex-1">
+                              <div className="font-medium">
+                                {passenger.fullName}
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                Seat {passenger.seatNumber}
+                              </div>
+                              <div className="mt-2 text-sm">
+                                {passenger.mealPreference ? (
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10 text-green-700 font-medium">
+                                    <CheckCircle className="h-3.5 w-3.5" />
+                                    {passenger.mealPreference}
+                                  </span>
+                                ) : (
+                                  <span className="text-muted-foreground italic">
+                                    No meal selected
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : booking?.mealPreference ? (
                     <div className="p-4 border rounded-lg bg-muted/50">
                       <div className="flex items-center gap-2">
                         <Utensils className="h-5 w-5 text-primary" />
                         <div>
                           <div className="font-medium">
-                            {mealData.mealPreference}
+                            {booking.mealPreference}
                           </div>
                           <div className="text-sm text-muted-foreground">
                             Selected meal preference
