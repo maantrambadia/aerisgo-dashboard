@@ -39,7 +39,27 @@ export function AuthProvider({ children }) {
         await refresh();
         return data.user;
       } catch (err) {
+        const status = err?.response?.status;
+        const field = err?.response?.data?.field;
+        const userNotFound = err?.response?.data?.userNotFound;
         const msg = err?.response?.data?.message || "Login failed";
+
+        // User doesn't exist - redirect to request-access
+        if (status === 404 && userNotFound) {
+          toast.error(
+            "No account found with this email. Please request access."
+          );
+          const error = new Error("user_not_found");
+          error.redirectToRequestAccess = true;
+          throw error;
+        }
+
+        // Incorrect password
+        if (status === 401 && field === "password") {
+          toast.error("Incorrect password. Please try again.");
+          throw err;
+        }
+
         toast.error(msg);
         throw err;
       }

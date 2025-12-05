@@ -29,6 +29,15 @@ export default function SignIn() {
       } else {
         navigate("/pending-approval", { replace: true });
       }
+    } catch (error) {
+      // Handle user not found - redirect to request-access
+      if (error.redirectToRequestAccess) {
+        setTimeout(() => {
+          navigate("/request-access", { replace: true });
+        }, 1500);
+        return;
+      }
+      // Other errors already handled in AuthContext
     } finally {
       setLoading(false);
     }
