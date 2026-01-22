@@ -67,7 +67,7 @@ export default function AdminDashboard() {
       ]);
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
-      toast.error("Failed to load dashboard data");
+      toast.error("We couldn't load dashboard data.");
     } finally {
       setLoading(false);
     }
@@ -370,7 +370,7 @@ export default function AdminDashboard() {
                             <div className="text-xs text-muted-foreground">
                               Avg: ₹
                               {Math.round(route.avgPrice).toLocaleString(
-                                "en-IN"
+                                "en-IN",
                               )}
                             </div>
                           </div>

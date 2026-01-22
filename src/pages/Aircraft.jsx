@@ -115,7 +115,7 @@ export default function Aircraft() {
       setPage(data.page || 1);
       setPages(data.pages || 1);
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to fetch aircraft";
+      const msg = err?.response?.data?.message || "We couldn't load aircraft.";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -147,12 +147,12 @@ export default function Aircraft() {
     setLastMaintenanceDate(
       aircraft.lastMaintenanceDate
         ? format(new Date(aircraft.lastMaintenanceDate), "yyyy-MM-dd")
-        : ""
+        : "",
     );
     setNextMaintenanceDate(
       aircraft.nextMaintenanceDate
         ? format(new Date(aircraft.nextMaintenanceDate), "yyyy-MM-dd")
-        : ""
+        : "",
     );
   }
 
@@ -165,12 +165,14 @@ export default function Aircraft() {
     if (!deleteTarget?._id) return setDeleteOpen(false);
     try {
       await api.delete(`/aircraft/${deleteTarget._id}`);
-      toast.success("Aircraft deleted");
+      toast.success("Aircraft deleted.");
       setDeleteOpen(false);
       setDeleteTarget(null);
       fetchAircraft();
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Delete failed");
+      toast.error(
+        err?.response?.data?.message || "We couldn't delete this aircraft.",
+      );
     }
   }
 
@@ -178,12 +180,12 @@ export default function Aircraft() {
     e.preventDefault();
 
     if (!registrationNumber.trim()) {
-      toast.error("Registration number is required");
+      toast.error("Registration number is required.");
       return;
     }
 
     if (!flightNumber.trim()) {
-      toast.error("Flight number is required");
+      toast.error("Flight number is required.");
       return;
     }
 
@@ -199,15 +201,17 @@ export default function Aircraft() {
       setSaving(true);
       if (editing?._id) {
         await api.put(`/aircraft/${editing._id}`, payload);
-        toast.success("Aircraft updated");
+        toast.success("Aircraft updated.");
       } else {
         await api.post(`/aircraft`, payload);
-        toast.success("Aircraft created");
+        toast.success("Aircraft created.");
       }
       setDialogOpen(false);
       fetchAircraft();
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Save failed");
+      toast.error(
+        err?.response?.data?.message || "We couldn't save this aircraft.",
+      );
     } finally {
       setSaving(false);
     }
@@ -401,7 +405,7 @@ export default function Aircraft() {
                                   {aircraft.lastMaintenanceDate
                                     ? format(
                                         new Date(aircraft.lastMaintenanceDate),
-                                        "dd MMM yyyy"
+                                        "dd MMM yyyy",
                                       )
                                     : "-"}
                                 </TableCell>
@@ -409,7 +413,7 @@ export default function Aircraft() {
                                   {aircraft.nextMaintenanceDate
                                     ? format(
                                         new Date(aircraft.nextMaintenanceDate),
-                                        "dd MMM yyyy"
+                                        "dd MMM yyyy",
                                       )
                                     : "-"}
                                 </TableCell>

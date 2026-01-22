@@ -48,7 +48,7 @@ export default function SeatMapDialog({
         booked: data.bookedSeats || 0,
       });
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to fetch seats");
+      toast.error(err?.response?.data?.message || "We couldn't load seats.");
     } finally {
       setLoading(false);
     }

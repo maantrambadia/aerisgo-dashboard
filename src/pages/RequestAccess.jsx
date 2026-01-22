@@ -27,7 +27,7 @@ export default function RequestAccess() {
       .replace(/\s+/g, " ")
       .replace(
         /\b([A-Za-z])(\w*)/g,
-        (_, f, rest) => f.toUpperCase() + rest.toLowerCase()
+        (_, f, rest) => f.toUpperCase() + rest.toLowerCase(),
       );
   }
 
@@ -47,7 +47,9 @@ export default function RequestAccess() {
     try {
       // validations
       if (!name || !/^[A-Za-z ]+$/.test(name)) {
-        toast.error("Full Name must contain only letters and spaces.");
+        toast.error(
+          "Please enter a valid full name (letters and spaces only).",
+        );
         return;
       }
       // basic password rules: min 8 chars, at least one letter and one number
@@ -57,7 +59,7 @@ export default function RequestAccess() {
         !/\d/.test(password)
       ) {
         toast.error(
-          "Password must be at least 8 characters and include at least one letter and one number."
+          "Password must be at least 8 characters and include at least one letter and one number.",
         );
         return;
       }
@@ -66,7 +68,7 @@ export default function RequestAccess() {
         return;
       }
       if (phone.length !== 10) {
-        toast.error("Phone number must be exactly 10 digits.");
+        toast.error("Please enter a valid 10-digit phone number.");
         return;
       }
 
@@ -86,7 +88,7 @@ export default function RequestAccess() {
 
       await requestAccess(payload);
       toast.success(
-        "Access request submitted. An admin will review your request."
+        "Access request submitted. An admin will review your request.",
       );
       navigate("/sign-in", { replace: true });
     } finally {

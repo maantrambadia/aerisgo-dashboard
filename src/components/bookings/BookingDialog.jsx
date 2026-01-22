@@ -102,7 +102,7 @@ export default function BookingDialog({
         setCalculatingPrice(false);
       }
     },
-    [formData.flightId, pricingConfig, flights]
+    [formData.flightId, pricingConfig, flights],
   );
 
   // Calculate price breakdown when editing and pricing config is loaded
@@ -115,12 +115,12 @@ export default function BookingDialog({
       flights.length > 0
     ) {
       const selectedSeat = seats.find(
-        (s) => s.seatNumber === formData.seatNumber
+        (s) => s.seatNumber === formData.seatNumber,
       );
       if (selectedSeat) {
         calculatePrice(
           formData.travelClass,
-          selectedSeat.isExtraLegroom || false
+          selectedSeat.isExtraLegroom || false,
         );
       }
     }
@@ -141,7 +141,8 @@ export default function BookingDialog({
       const { data } = await api.get("/flights?limit=100");
       // Filter to show only scheduled and delayed flights
       const activeFlights = (data.items || []).filter(
-        (flight) => flight.status === "scheduled" || flight.status === "delayed"
+        (flight) =>
+          flight.status === "scheduled" || flight.status === "delayed",
       );
       setFlights(activeFlights);
     } catch (err) {
@@ -154,7 +155,7 @@ export default function BookingDialog({
       const { data } = await api.get("/users");
       // Filter only passengers
       const passengers = (data.users || []).filter(
-        (user) => user.role === "passenger"
+        (user) => user.role === "passenger",
       );
       setUsers(passengers);
     } catch (err) {
@@ -216,16 +217,18 @@ export default function BookingDialog({
 
       if (booking) {
         await api.put(`/bookings/${booking._id}`, payload);
-        toast.success("Booking updated successfully");
+        toast.success("Booking updated successfully.");
       } else {
         await api.post("/bookings/admin", payload);
-        toast.success("Booking created successfully");
+        toast.success("Booking created successfully.");
       }
 
       onSuccess?.();
       onOpenChange(false);
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to save booking");
+      toast.error(
+        err?.response?.data?.message || "We couldn't save this booking.",
+      );
     } finally {
       setSaving(false);
     }
@@ -233,7 +236,7 @@ export default function BookingDialog({
 
   // Filter and organize seats
   const availableSeats = seats.filter(
-    (s) => s.isAvailable || s.seatNumber === booking?.seatNumber
+    (s) => s.isAvailable || s.seatNumber === booking?.seatNumber,
   );
 
   // Group seats by travel class
@@ -297,14 +300,14 @@ export default function BookingDialog({
                   {flights.map((flight) => {
                     // Format times in local timezone (IST)
                     const depTime = new Date(
-                      flight.departureTime
+                      flight.departureTime,
                     ).toLocaleTimeString("en-IN", {
                       hour: "2-digit",
                       minute: "2-digit",
                       hour12: false,
                     });
                     const arrTime = new Date(
-                      flight.arrivalTime
+                      flight.arrivalTime,
                     ).toLocaleTimeString("en-IN", {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -329,7 +332,7 @@ export default function BookingDialog({
                 onValueChange={(value) => {
                   // Auto-select travel class based on seat
                   const selectedSeat = seats.find(
-                    (s) => s.seatNumber === value
+                    (s) => s.seatNumber === value,
                   );
                   const travelClass =
                     selectedSeat?.travelClass || formData.travelClass;

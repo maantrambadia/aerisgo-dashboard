@@ -30,14 +30,16 @@ api.interceptors.response.use(
           current !== "/request-access" &&
           current !== "/pending-approval"
         ) {
-          toast.error(message || "Session expired. Please sign in again.");
+          toast.error(
+            message || "Your session has expired. Please sign in again.",
+          );
           window.location.assign("/sign-in");
         }
       }
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

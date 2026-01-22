@@ -103,7 +103,7 @@ export default function FlightOperationsDialog({
       setSelectedPilot(ops.crew?.pilot?._id || "");
       setSelectedCoPilot(ops.crew?.coPilot?._id || "");
       setSelectedAttendants(
-        ops.crew?.flightAttendants?.map((a) => a._id) || []
+        ops.crew?.flightAttendants?.map((a) => a._id) || [],
       );
       setGate(ops.gate || "");
       setStatus(ops.status || "scheduled");
@@ -111,11 +111,11 @@ export default function FlightOperationsDialog({
       setEstimatedDepartureTime(
         ops.estimatedDepartureTime
           ? format(new Date(ops.estimatedDepartureTime), "yyyy-MM-dd'T'HH:mm")
-          : ""
+          : "",
       );
     } catch (error) {
       console.error("Fetch operations data error:", error);
-      toast.error("Failed to load flight operations data");
+      toast.error("We couldn't load flight operations data.");
     } finally {
       setLoading(false);
     }
@@ -123,7 +123,7 @@ export default function FlightOperationsDialog({
 
   async function handleAssignAircraft() {
     if (!selectedAircraft) {
-      toast.error("Please select an aircraft");
+      toast.error("Please select an aircraft.");
       return;
     }
 
@@ -132,12 +132,12 @@ export default function FlightOperationsDialog({
       await api.post(`/flight-ops/${flight._id}/assign-aircraft`, {
         aircraftId: selectedAircraft,
       });
-      toast.success("Aircraft assigned successfully");
+      toast.success("Aircraft assigned.");
       if (onUpdate) onUpdate();
       fetchData();
     } catch (error) {
       toast.error(
-        error?.response?.data?.message || "Failed to assign aircraft"
+        error?.response?.data?.message || "We couldn't assign the aircraft.",
       );
     } finally {
       setSaving(false);
@@ -146,7 +146,7 @@ export default function FlightOperationsDialog({
 
   async function handleAssignCrew() {
     if (!selectedPilot || !selectedCoPilot) {
-      toast.error("Pilot and Co-Pilot are required");
+      toast.error("Pilot and co-pilot are required.");
       return;
     }
 
@@ -157,11 +157,13 @@ export default function FlightOperationsDialog({
         coPilotId: selectedCoPilot,
         flightAttendantIds: selectedAttendants,
       });
-      toast.success("Crew assigned successfully");
+      toast.success("Crew assigned.");
       if (onUpdate) onUpdate();
       fetchData();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to assign crew");
+      toast.error(
+        error?.response?.data?.message || "We couldn't assign the crew.",
+      );
     } finally {
       setSaving(false);
     }
@@ -169,7 +171,7 @@ export default function FlightOperationsDialog({
 
   async function handleUpdateGate() {
     if (!gate.trim()) {
-      toast.error("Please enter a gate number");
+      toast.error("Please enter a gate number.");
       return;
     }
 
@@ -179,11 +181,13 @@ export default function FlightOperationsDialog({
         gate: gate.trim().toUpperCase(),
         notifyPassengers: notifyGateChange,
       });
-      toast.success("Gate updated successfully");
+      toast.success("Gate updated.");
       if (onUpdate) onUpdate();
       fetchData();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to update gate");
+      toast.error(
+        error?.response?.data?.message || "We couldn't update the gate.",
+      );
     } finally {
       setSaving(false);
     }
@@ -199,7 +203,7 @@ export default function FlightOperationsDialog({
 
       if (status === "delayed") {
         if (!delayReason.trim()) {
-          toast.error("Please provide a delay reason");
+          toast.error("Please provide a delay reason.");
           setSaving(false);
           return;
         }
@@ -208,11 +212,14 @@ export default function FlightOperationsDialog({
       }
 
       await api.put(`/flight-ops/${flight._id}/status`, payload);
-      toast.success("Flight status updated successfully");
+      toast.success("Flight status updated.");
       if (onUpdate) onUpdate();
       fetchData();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to update status");
+      toast.error(
+        error?.response?.data?.message ||
+          "We couldn't update the flight status.",
+      );
     } finally {
       setSaving(false);
     }
@@ -222,7 +229,7 @@ export default function FlightOperationsDialog({
     setSelectedAttendants((prev) =>
       prev.includes(attendantId)
         ? prev.filter((id) => id !== attendantId)
-        : [...prev, attendantId]
+        : [...prev, attendantId],
     );
   }
 
@@ -534,10 +541,10 @@ export default function FlightOperationsDialog({
                       opsData?.status === "scheduled"
                         ? "bg-green-500/10 text-green-700 border-green-500/20"
                         : opsData?.status === "delayed"
-                        ? "bg-yellow-500/10 text-yellow-700 border-yellow-500/20"
-                        : opsData?.status === "cancelled"
-                        ? "bg-red-500/10 text-red-700 border-red-500/20"
-                        : "bg-blue-500/10 text-blue-700 border-blue-500/20"
+                          ? "bg-yellow-500/10 text-yellow-700 border-yellow-500/20"
+                          : opsData?.status === "cancelled"
+                            ? "bg-red-500/10 text-red-700 border-red-500/20"
+                            : "bg-blue-500/10 text-blue-700 border-blue-500/20"
                     }
                   >
                     {opsData?.status}

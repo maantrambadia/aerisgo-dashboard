@@ -117,7 +117,8 @@ export default function Crew() {
       setPage(data.page || 1);
       setPages(data.pages || 1);
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to fetch crew";
+      const msg =
+        err?.response?.data?.message || "We couldn't load crew members.";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -172,12 +173,14 @@ export default function Crew() {
     if (!deleteTarget?._id) return setDeleteOpen(false);
     try {
       await api.delete(`/crew/${deleteTarget._id}`);
-      toast.success("Crew member deleted");
+      toast.success("Crew member deleted.");
       setDeleteOpen(false);
       setDeleteTarget(null);
       fetchCrew();
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Delete failed");
+      toast.error(
+        err?.response?.data?.message || "We couldn't delete this crew member.",
+      );
     }
   }
 
@@ -186,27 +189,27 @@ export default function Crew() {
 
     // Validation - matching backend required fields
     if (!employeeId.trim()) {
-      toast.error("Employee ID is required");
+      toast.error("Employee ID is required.");
       return;
     }
     if (!name.trim()) {
-      toast.error("Name is required");
+      toast.error("Name is required.");
       return;
     }
     if (!role) {
-      toast.error("Role is required");
+      toast.error("Role is required.");
       return;
     }
     if (!email.trim()) {
-      toast.error("Email is required");
+      toast.error("Email is required.");
       return;
     }
     if (!phone.trim()) {
-      toast.error("Phone is required");
+      toast.error("Phone is required.");
       return;
     }
     if (phone.length !== 10) {
-      toast.error("Phone number must be exactly 10 digits");
+      toast.error("Please enter a valid 10-digit phone number.");
       return;
     }
 
@@ -226,16 +229,18 @@ export default function Crew() {
       if (editing?._id) {
         // Backend returns { message, crew }
         await api.put(`/crew/${editing._id}`, payload);
-        toast.success("Crew member updated");
+        toast.success("Crew member updated.");
       } else {
         // Backend returns { message, crew }
         await api.post(`/crew`, payload);
-        toast.success("Crew member created");
+        toast.success("Crew member created.");
       }
       setDialogOpen(false);
       fetchCrew();
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Save failed");
+      toast.error(
+        err?.response?.data?.message || "We couldn't save this crew member.",
+      );
     } finally {
       setSaving(false);
     }
@@ -548,7 +553,7 @@ export default function Crew() {
                       .map(
                         (word) =>
                           word.charAt(0).toUpperCase() +
-                          word.slice(1).toLowerCase()
+                          word.slice(1).toLowerCase(),
                       )
                       .join(" ");
                     setName(capitalized);

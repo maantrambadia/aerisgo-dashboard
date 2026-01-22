@@ -85,7 +85,7 @@ export default function Users() {
       const { data } = await api.get("/users");
       setUsers(data.users || []);
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to load users";
+      const msg = err?.response?.data?.message || "We couldn't load users.";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -100,14 +100,15 @@ export default function Users() {
     setApproving((s) => ({ ...s, [id]: true }));
     try {
       const { data } = await api.post(`/users/${id}/approve`);
-      toast.success(data?.message || "User approved");
+      toast.success(data?.message || "User approved.");
       setUsers((list) =>
         list.map((u) =>
-          u._id === id || u.id === id ? { ...u, isVerified: true } : u
-        )
+          u._id === id || u.id === id ? { ...u, isVerified: true } : u,
+        ),
       );
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to approve user";
+      const msg =
+        err?.response?.data?.message || "We couldn't approve this user.";
       toast.error(msg);
     } finally {
       setApproving((s) => ({ ...s, [id]: false }));
@@ -166,18 +167,19 @@ export default function Users() {
 
       const id = editingUser._id || editingUser.id;
       const { data } = await api.put(`/users/${id}`, payload);
-      toast.success(data?.message || "User updated successfully");
+      toast.success(data?.message || "User updated.");
 
       // Update local state
       setUsers((list) =>
         list.map((u) =>
-          u._id === id || u.id === id ? { ...u, ...data.user } : u
-        )
+          u._id === id || u.id === id ? { ...u, ...data.user } : u,
+        ),
       );
 
       closeEditDialog();
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to update user";
+      const msg =
+        err?.response?.data?.message || "We couldn't update this user.";
       toast.error(msg);
     } finally {
       setUpdating(false);
@@ -206,14 +208,15 @@ export default function Users() {
     try {
       const id = deletingUser._id || deletingUser.id;
       await api.delete(`/users/${id}`);
-      toast.success("User deleted successfully");
+      toast.success("User deleted.");
 
       // Remove from local state
       setUsers((list) => list.filter((u) => u._id !== id && u.id !== id));
 
       closeDeleteDialog();
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to delete user";
+      const msg =
+        err?.response?.data?.message || "We couldn't delete this user.";
       toast.error(msg);
     } finally {
       setDeleting(false);
@@ -379,8 +382,8 @@ export default function Users() {
                                         user.role === "admin"
                                           ? "default"
                                           : user.role === "staff"
-                                          ? "secondary"
-                                          : "outline"
+                                            ? "secondary"
+                                            : "outline"
                                       }
                                       className="capitalize"
                                     >

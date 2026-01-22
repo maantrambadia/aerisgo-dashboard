@@ -102,7 +102,7 @@ export default function Dashboard() {
     setRefreshing(true);
     await fetchAllData();
     setRefreshing(false);
-    toast.success("Dashboard refreshed");
+    toast.success("Dashboard refreshed.");
   }
 
   async function fetchDashboardStats() {
@@ -117,7 +117,7 @@ export default function Dashboard() {
   async function fetchFlightsReport() {
     try {
       const { data } = await api.get(
-        `/analytics/flights-operated?period=${flightsPeriod}`
+        `/analytics/flights-operated?period=${flightsPeriod}`,
       );
       setFlightsReport(data.data || []);
     } catch (err) {
@@ -561,7 +561,7 @@ export default function Dashboard() {
                               <div className="text-xs text-muted-foreground">
                                 Avg: ₹
                                 {Math.round(route.avgPrice).toLocaleString(
-                                  "en-IN"
+                                  "en-IN",
                                 )}
                               </div>
                             </div>

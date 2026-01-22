@@ -132,7 +132,7 @@ export default function ManagementFlights() {
 
   const filters = useMemo(
     () => ({ q, source, destination, status, dateFrom, dateTo }),
-    [q, source, destination, status, dateFrom, dateTo]
+    [q, source, destination, status, dateFrom, dateTo],
   );
 
   // Load airports and aircraft on mount
@@ -144,7 +144,7 @@ export default function ManagementFlights() {
         setAirports(data);
       } catch (error) {
         console.error("Failed to load airports:", error);
-        toast.error("Failed to load airports data");
+        toast.error("We couldn't load airport data.");
       } finally {
         setAirportsLoading(false);
       }
@@ -157,7 +157,7 @@ export default function ManagementFlights() {
         setAircraft(data.aircraft || []);
       } catch (error) {
         console.error("Failed to load aircraft:", error);
-        toast.error("Failed to load aircraft data");
+        toast.error("We couldn't load aircraft data.");
       } finally {
         setAircraftLoading(false);
       }
@@ -186,7 +186,7 @@ export default function ManagementFlights() {
       setPage(data.page || 1);
       setPages(data.pages || 1);
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to fetch flights";
+      const msg = err?.response?.data?.message || "We couldn't load flights.";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -240,12 +240,14 @@ export default function ManagementFlights() {
     if (!deleteTarget?._id) return setDeleteOpen(false);
     try {
       await api.delete(`/flights/${deleteTarget._id}`);
-      toast.success("Flight deleted");
+      toast.success("Flight deleted.");
       setDeleteOpen(false);
       setDeleteTarget(null);
       fetchFlights();
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Delete failed");
+      toast.error(
+        err?.response?.data?.message || "We couldn't delete this flight.",
+      );
     }
   }
 
@@ -282,17 +284,19 @@ export default function ManagementFlights() {
           status: payload.status,
         };
         await api.put(`/flights/${editing._id}`, updatePayload);
-        toast.success("Flight updated");
+        toast.success("Flight updated.");
       } else {
         // When creating, force status to 'scheduled'
         payload.status = "scheduled";
         await api.post(`/flights`, payload);
-        toast.success("Flight created with seats");
+        toast.success("Flight created (seats generated).");
       }
       setDrawerOpen(false);
       fetchFlights();
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Save failed");
+      toast.error(
+        err?.response?.data?.message || "We couldn't save this flight.",
+      );
     } finally {
       setSaving(false);
     }
@@ -474,7 +478,7 @@ export default function ManagementFlights() {
                                   {f.departureTime
                                     ? format(
                                         new Date(f.departureTime),
-                                        "dd MMM yyyy, HH:mm"
+                                        "dd MMM yyyy, HH:mm",
                                       )
                                     : "-"}
                                 </TableCell>
@@ -482,14 +486,14 @@ export default function ManagementFlights() {
                                   {f.arrivalTime
                                     ? format(
                                         new Date(f.arrivalTime),
-                                        "dd MMM yyyy, HH:mm"
+                                        "dd MMM yyyy, HH:mm",
                                       )
                                     : "-"}
                                 </TableCell>
                                 <TableCell>
                                   ₹
                                   {Number(f.baseFare || 0).toLocaleString(
-                                    "en-IN"
+                                    "en-IN",
                                   )}
                                 </TableCell>
                                 <TableCell>
@@ -498,10 +502,10 @@ export default function ManagementFlights() {
                                       f.status === "scheduled"
                                         ? "default"
                                         : f.status === "delayed"
-                                        ? "secondary"
-                                        : f.status === "completed"
-                                        ? "outline"
-                                        : "destructive"
+                                          ? "secondary"
+                                          : f.status === "completed"
+                                            ? "outline"
+                                            : "destructive"
                                     }
                                     className="capitalize"
                                   >
@@ -528,7 +532,7 @@ export default function ManagementFlights() {
                                         <DropdownMenuItem
                                           onClick={() =>
                                             navigate(
-                                              `/flights/${f._id}/seat-map`
+                                              `/flights/${f._id}/seat-map`,
                                             )
                                           }
                                         >
@@ -773,16 +777,16 @@ export default function ManagementFlights() {
                             const year = date.getFullYear();
                             const month = String(date.getMonth() + 1).padStart(
                               2,
-                              "0"
+                              "0",
                             );
                             const day = String(date.getDate()).padStart(2, "0");
                             const hours = String(date.getHours()).padStart(
                               2,
-                              "0"
+                              "0",
                             );
                             const minutes = String(date.getMinutes()).padStart(
                               2,
-                              "0"
+                              "0",
                             );
                             return `${year}-${month}-${day}T${hours}:${minutes}`;
                           })()
@@ -808,16 +812,16 @@ export default function ManagementFlights() {
                             const year = date.getFullYear();
                             const month = String(date.getMonth() + 1).padStart(
                               2,
-                              "0"
+                              "0",
                             );
                             const day = String(date.getDate()).padStart(2, "0");
                             const hours = String(date.getHours()).padStart(
                               2,
-                              "0"
+                              "0",
                             );
                             const minutes = String(date.getMinutes()).padStart(
                               2,
-                              "0"
+                              "0",
                             );
                             return `${year}-${month}-${day}T${hours}:${minutes}`;
                           })()

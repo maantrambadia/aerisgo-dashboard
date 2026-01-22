@@ -50,7 +50,8 @@ export default function RewardsManagementDialog({ user, open, onOpenChange }) {
       const { data } = await api.get(`/rewards/user/${user._id || user.id}`);
       setRewardsData(data);
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to load rewards data";
+      const msg =
+        err?.response?.data?.message || "We couldn't load rewards data.";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -71,14 +72,14 @@ export default function RewardsManagementDialog({ user, open, onOpenChange }) {
         {
           points: parseInt(addForm.points),
           description: addForm.description.trim() || undefined,
-        }
+        },
       );
       toast.success(data.message || "Points added successfully");
       setAddForm({ points: "", description: "" });
       await fetchRewardsData();
       setActiveTab("overview");
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to add points";
+      const msg = err?.response?.data?.message || "We couldn't add points.";
       toast.error(msg);
     } finally {
       setProcessing(false);
@@ -99,14 +100,14 @@ export default function RewardsManagementDialog({ user, open, onOpenChange }) {
         {
           points: parseInt(deductForm.points),
           description: deductForm.description.trim() || undefined,
-        }
+        },
       );
       toast.success(data.message || "Points deducted successfully");
       setDeductForm({ points: "", description: "" });
       await fetchRewardsData();
       setActiveTab("overview");
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to deduct points";
+      const msg = err?.response?.data?.message || "We couldn't deduct points.";
       toast.error(msg);
     } finally {
       setProcessing(false);
@@ -227,7 +228,7 @@ export default function RewardsManagementDialog({ user, open, onOpenChange }) {
                               <p className="text-xs text-muted-foreground mt-0.5">
                                 {format(
                                   new Date(txn.createdAt),
-                                  "MMM dd, yyyy 'at' hh:mm a"
+                                  "MMM dd, yyyy 'at' hh:mm a",
                                 )}
                               </p>
                             </div>

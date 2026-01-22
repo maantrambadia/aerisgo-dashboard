@@ -94,7 +94,7 @@ export default function FlightOperations() {
       setFlights(res.data.items || []);
     } catch (error) {
       console.error("Fetch flights error:", error);
-      toast.error("Failed to load flights");
+      toast.error("We couldn't load flights.");
     } finally {
       setLoading(false);
     }
@@ -104,7 +104,7 @@ export default function FlightOperations() {
     setRefreshing(true);
     await fetchFlights();
     setRefreshing(false);
-    toast.success("Flights refreshed");
+    toast.success("Flights refreshed.");
   }
 
   function applyFilters() {
@@ -148,7 +148,7 @@ export default function FlightOperations() {
         (f) =>
           f.flightNumber.toLowerCase().includes(query) ||
           f.source.toLowerCase().includes(query) ||
-          f.destination.toLowerCase().includes(query)
+          f.destination.toLowerCase().includes(query),
       );
     }
 
@@ -324,13 +324,13 @@ export default function FlightOperations() {
                                   <div className="text-sm">
                                     {format(
                                       new Date(flight.departureTime),
-                                      "dd MMM yyyy"
+                                      "dd MMM yyyy",
                                     )}
                                   </div>
                                   <div className="text-xs text-muted-foreground">
                                     {format(
                                       new Date(flight.departureTime),
-                                      "HH:mm"
+                                      "HH:mm",
                                     )}
                                   </div>
                                 </div>

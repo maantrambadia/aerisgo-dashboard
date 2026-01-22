@@ -35,7 +35,7 @@ export function AuthProvider({ children }) {
           password,
           remember,
         });
-        toast.success(data.message || "Logged in");
+        toast.success(data.message || "Signed in successfully.");
         await refresh();
         return data.user;
       } catch (err) {
@@ -47,7 +47,7 @@ export function AuthProvider({ children }) {
         // User doesn't exist - redirect to request-access
         if (status === 404 && userNotFound) {
           toast.error(
-            "No account found with this email. Please request access."
+            "No account found with this email. Please request access.",
           );
           const error = new Error("user_not_found");
           error.redirectToRequestAccess = true;
@@ -64,7 +64,7 @@ export function AuthProvider({ children }) {
         throw err;
       }
     },
-    [refresh]
+    [refresh],
   );
 
   const requestAccess = useCallback(
@@ -85,7 +85,7 @@ export function AuthProvider({ children }) {
         throw err;
       }
     },
-    []
+    [],
   );
 
   const logout = useCallback(async () => {
@@ -95,7 +95,7 @@ export function AuthProvider({ children }) {
       // Ignore errors during logout
     }
     setUser(null);
-    toast.success("Signed out");
+    toast.success("Signed out.");
   }, []);
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export function AuthProvider({ children }) {
 
   const value = useMemo(
     () => ({ user, loading, refresh, login, logout, requestAccess }),
-    [user, loading, refresh, login, logout, requestAccess]
+    [user, loading, refresh, login, logout, requestAccess],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

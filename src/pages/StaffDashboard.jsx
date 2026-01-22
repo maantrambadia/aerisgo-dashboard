@@ -39,7 +39,7 @@ export default function StaffDashboard() {
       await Promise.all([fetchLoadFactor(), fetchTotalFlights()]);
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
-      toast.error("Failed to load dashboard data");
+      toast.error("We couldn't load dashboard data.");
     } finally {
       setLoading(false);
     }

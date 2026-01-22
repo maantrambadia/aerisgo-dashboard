@@ -98,7 +98,7 @@ export default function BookingDetailsDialog({
   async function fetchCancellationPreview() {
     try {
       const { data } = await api.get(
-        `/bookings/${booking._id}/cancellation-preview`
+        `/bookings/${booking._id}/cancellation-preview`,
       );
       setCancellationData(data);
     } catch (error) {
@@ -123,12 +123,14 @@ export default function BookingDetailsDialog({
       await api.post(`/bookings/${booking._id}/cancel`, {
         reason: "Cancelled by admin/staff",
       });
-      toast.success("Booking cancelled successfully");
+      toast.success("Booking cancelled successfully.");
       setCancelDialogOpen(false);
       if (onUpdate) onUpdate();
       onOpenChange(false);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to cancel booking");
+      toast.error(
+        error?.response?.data?.message || "We couldn't cancel this booking.",
+      );
     } finally {
       setCancelling(false);
     }
@@ -138,14 +140,14 @@ export default function BookingDetailsDialog({
     setCancelling(true);
     try {
       await api.delete(`/check-in/${booking._id}`);
-      toast.success("Check-in cancelled successfully");
+      toast.success("Check-in cancelled successfully.");
       await fetchCheckInStatus();
       if (onUpdate) onUpdate();
       onOpenChange(false);
     } catch (error) {
       console.error("Cancel check-in error:", error);
       toast.error(
-        error?.response?.data?.message || "Failed to cancel check-in"
+        error?.response?.data?.message || "We couldn't cancel check-in.",
       );
     } finally {
       setCancelling(false);
@@ -373,7 +375,7 @@ export default function BookingDetailsDialog({
                           Cancelled on:{" "}
                           {format(
                             new Date(booking.cancellationDetails.cancelledAt),
-                            "dd MMM yyyy, HH:mm"
+                            "dd MMM yyyy, HH:mm",
                           )}
                         </div>
                         <div>

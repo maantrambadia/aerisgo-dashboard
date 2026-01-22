@@ -97,7 +97,7 @@ export default function Bookings() {
 
   const filters = useMemo(
     () => ({ q, flightNumber, passengerName, status }),
-    [q, flightNumber, passengerName, status]
+    [q, flightNumber, passengerName, status],
   );
 
   async function fetchBookings(opts = {}) {
@@ -117,7 +117,7 @@ export default function Bookings() {
       setPage(data.page || 1);
       setPages(data.pages || 1);
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to fetch bookings";
+      const msg = err?.response?.data?.message || "We couldn't load bookings.";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -154,12 +154,14 @@ export default function Bookings() {
     if (!cancelTarget?._id) return setCancelDialogOpen(false);
     try {
       await api.post(`/bookings/${cancelTarget._id}/cancel`);
-      toast.success("Booking cancelled");
+      toast.success("Booking cancelled.");
       setCancelDialogOpen(false);
       setCancelTarget(null);
       fetchBookings();
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Cancel failed");
+      toast.error(
+        err?.response?.data?.message || "We couldn't cancel this booking.",
+      );
     }
   }
 
@@ -417,7 +419,7 @@ export default function Bookings() {
                                 <TableCell>
                                   ₹
                                   {Number(booking.price || 0).toLocaleString(
-                                    "en-IN"
+                                    "en-IN",
                                   )}
                                 </TableCell>
                                 <TableCell>
@@ -431,8 +433,8 @@ export default function Bookings() {
                                       booking.status === "confirmed"
                                         ? "default"
                                         : booking.status === "pending"
-                                        ? "secondary"
-                                        : "destructive"
+                                          ? "secondary"
+                                          : "destructive"
                                     }
                                     className="capitalize"
                                   >

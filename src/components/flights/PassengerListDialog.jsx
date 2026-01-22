@@ -40,7 +40,9 @@ export default function PassengerListDialog({ open, onOpenChange, flight }) {
       setPassengers(data.passengers || []);
       setTotalPassengers(data.totalPassengers || 0);
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to fetch passengers");
+      toast.error(
+        err?.response?.data?.message || "We couldn't load the passenger list.",
+      );
     } finally {
       setLoading(false);
     }
@@ -131,7 +133,7 @@ export default function PassengerListDialog({ open, onOpenChange, flight }) {
                         <div className="text-xs text-muted-foreground">
                           DOB:{" "}
                           {new Date(passenger.dateOfBirth).toLocaleDateString(
-                            "en-IN"
+                            "en-IN",
                           )}
                         </div>
                       )}
@@ -166,15 +168,15 @@ export default function PassengerListDialog({ open, onOpenChange, flight }) {
                           passenger.travelClass === "first"
                             ? "border-purple-500 text-purple-700 dark:text-purple-400"
                             : passenger.travelClass === "business"
-                            ? "border-blue-500 text-blue-700 dark:text-blue-400"
-                            : "border-gray-500 text-gray-700 dark:text-gray-400"
+                              ? "border-blue-500 text-blue-700 dark:text-blue-400"
+                              : "border-gray-500 text-gray-700 dark:text-gray-400"
                         }`}
                       >
                         {passenger.travelClass === "first"
                           ? "⭐ First"
                           : passenger.travelClass === "business"
-                          ? "✈️ Business"
-                          : "🪑 Economy"}
+                            ? "✈️ Business"
+                            : "🪑 Economy"}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -183,8 +185,8 @@ export default function PassengerListDialog({ open, onOpenChange, flight }) {
                           passenger.status === "confirmed"
                             ? "default"
                             : passenger.status === "pending"
-                            ? "secondary"
-                            : "destructive"
+                              ? "secondary"
+                              : "destructive"
                         }
                         className="capitalize"
                       >

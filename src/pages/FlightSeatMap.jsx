@@ -41,7 +41,7 @@ const AdminSeatButton = ({ seat, onUnlock, lockedInfo }) => {
     const updateTimer = () => {
       const remaining = Math.max(
         0,
-        Math.floor((new Date(lockedInfo.expiresAt) - new Date()) / 1000)
+        Math.floor((new Date(lockedInfo.expiresAt) - new Date()) / 1000),
       );
       setTimeRemaining(remaining);
     };
@@ -76,9 +76,11 @@ const AdminSeatButton = ({ seat, onUnlock, lockedInfo }) => {
     try {
       setIsUnlocking(true);
       await onUnlock(seat.seatNumber);
-      toast.success(`Seat ${seat.seatNumber} unlocked successfully`);
+      toast.success(`Seat ${seat.seatNumber} unlocked successfully.`);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to unlock seat");
+      toast.error(
+        error.response?.data?.message || "We couldn't unlock this seat.",
+      );
     } finally {
       setIsUnlocking(false);
     }
@@ -115,7 +117,7 @@ const AdminSeatButton = ({ seat, onUnlock, lockedInfo }) => {
     if (!seat.isAvailable) {
       // Find passenger details from booking
       const passenger = seat.booking?.passengers?.find(
-        (p) => p.seatNumber === seat.seatNumber
+        (p) => p.seatNumber === seat.seatNumber,
       );
       const passengerName =
         passenger?.fullName || seat.booking?.userId?.name || "Passenger";
@@ -218,7 +220,9 @@ export default function FlightSeatMap() {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      toast.error(error.response?.data?.message || "Failed to load seat map");
+      toast.error(
+        error.response?.data?.message || "We couldn't load the seat map.",
+      );
       setTimeout(() => navigate("/flights"), 1500);
     }
   }, [id, navigate]);
@@ -231,7 +235,7 @@ export default function FlightSeatMap() {
   const addActivityLog = useCallback((message) => {
     const timestamp = new Date().toLocaleTimeString();
     setActivityLog((prev) =>
-      [{ time: timestamp, message }, ...prev].slice(0, 10)
+      [{ time: timestamp, message }, ...prev].slice(0, 10),
     );
   }, []);
 
@@ -252,7 +256,7 @@ export default function FlightSeatMap() {
           return newLocks;
         });
         addActivityLog(
-          `Seat ${data.seatNumber} locked by ${data.userName || "User"}`
+          `Seat ${data.seatNumber} locked by ${data.userName || "User"}`,
         );
       },
       onSeatUnlocked: (data) => {
@@ -268,8 +272,8 @@ export default function FlightSeatMap() {
         if (data.flightId !== id) return;
         setSeats((prevSeats) =>
           prevSeats.map((s) =>
-            s.seatNumber === data.seatNumber ? { ...s, isAvailable: false } : s
-          )
+            s.seatNumber === data.seatNumber ? { ...s, isAvailable: false } : s,
+          ),
         );
         setLockedSeats((prev) => {
           const newLocks = new Map(prev);
@@ -292,8 +296,8 @@ export default function FlightSeatMap() {
         // Booking cancelled, seat becomes available
         setSeats((prevSeats) =>
           prevSeats.map((s) =>
-            s.seatNumber === data.seatNumber ? { ...s, isAvailable: true } : s
-          )
+            s.seatNumber === data.seatNumber ? { ...s, isAvailable: true } : s,
+          ),
         );
         setLockedSeats((prev) => {
           const newLocks = new Map(prev);
@@ -301,14 +305,14 @@ export default function FlightSeatMap() {
           return newLocks;
         });
         addActivityLog(
-          `Seat ${data.seatNumber} booking cancelled - now available`
+          `Seat ${data.seatNumber} booking cancelled - now available`,
         );
       },
       onError: (error) => {
         console.error("Socket error:", error);
       },
     }),
-    [id, addActivityLog]
+    [id, addActivityLog],
   );
 
   // Initialize Socket.IO connection
